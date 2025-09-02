@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 // import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 // import PageMeta from "../../components/common/PageMeta";
@@ -18,7 +18,7 @@ import { FiEye } from "react-icons/fi";
 const tableData = [{ name: 'Alex', applyDate: '20-02-2026', remark: 'Pending', status: 'Selected' }, { name: 'Alex', applyDate: '20-02-2026', remark: 'Pending', status: 'Selected' }]
 
 const ParticipantDashboard: React.FC = () => {
-    const [isChecked, setIsChecked] = useState<boolean>(false);
+    // const [isChecked, setIsChecked] = useState<boolean>(false);
     return (
         <div>
             {/* <PageMeta
