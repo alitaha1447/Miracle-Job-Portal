@@ -1,13 +1,29 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 
+
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [userType, setUserType] = useState("Student");
+
+  const navigate = useNavigate()
+
+  const handleSignUp = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    localStorage.setItem("role", userType);
+    localStorage.setItem("token", "mock_token");
+
+    if (userType === "Student") navigate("/student/dashboard");
+    if (userType === "Company") navigate("/company/dashboard");
+    if (userType === "Collage") navigate("/college/dashboard");
+  };
+
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -28,6 +44,23 @@ export default function SignUpForm() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Enter your email and password to sign up!
             </p>
+          </div>
+          <div className="mb-5">
+            {["Student", "Company", "College"].map((type) => (
+              <label
+                key={type}
+                className="inline-flex items-center mr-6 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  value={type}
+                  checked={userType === type}
+                  onChange={(e) => setUserType(e.target.value)}
+                  className="mr-2 focus:outline-none focus:ring-0"
+                />
+                {type}
+              </label>
+            ))}
           </div>
           <div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
@@ -82,7 +115,7 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSignUp}>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   {/* <!-- First Name --> */}
@@ -164,7 +197,7 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                  <button type="button" className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                     Sign Up
                   </button>
                 </div>
