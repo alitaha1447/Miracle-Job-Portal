@@ -1,0 +1,5 @@
+/* Ensure cursor shows on all interactive elements */
+.cursor-pointer,
+.cursor-pointer * {
+    cursor: pointer !important;
+}
