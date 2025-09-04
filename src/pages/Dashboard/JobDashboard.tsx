@@ -24,12 +24,12 @@ import ReactQuill from 'react-quill';
 import Select from "react-select";
 import { Dropdown } from '../../components/ui/dropdown/Dropdown';
 
-const options = [
-    { value: "marketing", label: "Marketing" },
-    { value: "template", label: "Template" },
-    { value: "development", label: "Development" },
+// const options = [
+//     { value: "marketing", label: "Marketing" },
+//     { value: "template", label: "Template" },
+//     { value: "development", label: "Development" },
 
-];
+// ];
 
 const role = [
     { value: "0", label: "Frontend Developer" },
@@ -52,6 +52,18 @@ const skills = [
     { value: "11", label: "Jira" },
     { value: "12", label: "Trello" },
 ];
+
+const preferredOrganization = [
+    { value: "0", label: "LNCT" },
+    { value: "1", label: "TIT" },
+    { value: "2", label: "Bansal" },
+    { value: "3", label: "TRUBA" },
+    { value: "4", label: "All Saints" },
+    { value: "5", label: "Sagar" },
+    { value: "6", label: "MIRACLE" },
+    { value: "7", label: "Sagar" },
+    { value: "8", label: "Sagar" },
+];
 const mode = [
     { value: "0", label: "Online" },
     { value: "1", label: "Offline" },
@@ -67,6 +79,12 @@ const tableData = [
     { role: 'HR', skill: 'Communication, Excel, Word', salary: 5000, jobType: 'Intern', desc: 'Intern	', status: 'Hold', assignedBy: 15 },
 ]
 
+// const courseFeesOptions = [
+//     { value: "0", label: "Per Month" },
+//     { value: "1", label: "Per Annum" },
+//     { value: "2", label: "One Time" },
+// ]
+
 // const interviewModeOptions = [
 //     { value: "online", label: "Online" },
 //     { value: "offline", label: "Offline" },
@@ -79,12 +97,18 @@ const JobDashboard: React.FC = () => {
     const [openStatusIdx, setOpenStatusIdx] = useState<number | null>(null);
     const [openPostJob, setOpenPostJob] = useState<boolean>(false)
     const [value, setValue] = useState<string>('');
+
+    // Min Experience (Skill-wise)
     const [experience, setExperience] = useState([
         { skill: null, expYears: "" },
     ]);
+
     const [interviewStructure, setInterviewStructure] = useState([
         { interviewMode: null }
     ])
+
+
+
 
     const toggleRowMenu = (idx: number) =>
         setOpenMenuIdx(prev => (prev === idx ? null : idx));
@@ -328,24 +352,19 @@ const JobDashboard: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <BasicTableOne /> */}
 
 
-                    {/* </ComponentCard> */}
                 </div>
             </div>
             <Modal isOpen={openPostJob} onClose={togglePostJob} className="max-w-6xl ">
-                {/* Card container with fixed height and flex layout */}
                 <div className="relative w-full h-[85vh] bg-white rounded-3xl dark:bg-gray-900 flex flex-col">
 
-                    {/* Header (fixed) */}
                     <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
                         <h4 className="mb-1 text-2xl font-semibold text-gray-800 dark:text-white/90">
                             Post Job
                         </h4>
                     </div>
 
-                    {/* Body (scrollable) */}
                     <form className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
                         <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                             <div>
@@ -353,8 +372,7 @@ const JobDashboard: React.FC = () => {
                                 <Select
                                     options={role}
                                     placeholder="Select an option"
-                                // onChange={handleSelectChange}
-                                // className="dark:bg-dark-900"
+
                                 />
                             </div>
 
@@ -364,8 +382,7 @@ const JobDashboard: React.FC = () => {
                                     isMulti
                                     options={skills}
                                     placeholder="Select an skills"
-                                // onChange={handleSelectChange}
-                                // className="dark:bg-dark-900"
+
                                 />
                             </div>
 
@@ -377,10 +394,8 @@ const JobDashboard: React.FC = () => {
                             <div>
                                 <Label>Preferred Organization</Label>
                                 <Select
-                                    options={options}
+                                    options={preferredOrganization}
                                     placeholder="Select an option"
-                                // onChange={handleSelectChange}
-                                // className="dark:bg-dark-900"
                                 />
                             </div>
 
@@ -389,24 +404,18 @@ const JobDashboard: React.FC = () => {
                                 <div className="mt-1 flex items-center gap-3">
 
                                     <Input
-                                        type="text"
-                                        // inputMode="numeric"
+                                        type="number"
                                         placeholder="25,000"
-                                        // value={salaryMin}
-                                        // onChange={handleMinChange}
                                         className="flex-1"
                                     />
                                     <span className="text-gray-400 dark:text-gray-500">to</span>
                                     <Input
-                                        type="text"
-                                        // inputMode="numeric"
+                                        type="number"
                                         placeholder="55,000"
-                                        // value={salaryMax}
-                                        // onChange={handleMaxChange}
+
                                         className="flex-1"
                                     />
                                 </div>
-                                {/* <Input type="text" value="AS4568384" /> */}
                             </div>
 
                             <div >
@@ -415,7 +424,9 @@ const JobDashboard: React.FC = () => {
 
                                     <div className="flex items-center gap-2">
                                         <div
-                                            onClick={handleAddExperience}
+                                            onClick={() => {
+                                                handleAddExperience();
+                                            }}
                                             className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center cursor-pointer"
                                             title="Add Experience"
                                         >
@@ -424,28 +435,27 @@ const JobDashboard: React.FC = () => {
                                     </div>
                                 </div>
 
+
                                 <div className="space-y-3">
                                     {experience.map((_, index) => (
                                         <div
                                             key={index}
-                                            className="flex items-center gap-3 flex-nowrap overflow-hidden"
+                                            className="flex items-center gap-3 flex-nowrap"
                                         >
-                                            {/* Skill Select (grows & shrinks, starts ~260px) */}
+
                                             <div className="min-w-0 basis-[260px]">
                                                 <Select
-                                                    options={options}
+                                                    options={skills}
                                                     placeholder="Select an option"
-                                                // onChange={handleSelectChange}
-                                                // className="dark:bg-dark-900"
+
                                                 />
                                             </div>
 
-                                            {/* Years Input (shrinks, starts ~140px, won't go below 96px) */}
                                             <div className="shrink basis-[140px] min-w-[96px]">
-                                                <Input className="w-full" type="text" placeholder="Years (e.g., 2)" />
+                                                <Input className="w-full" type="number" placeholder="Years (e.g., 2)" />
                                             </div>
 
-                                            {/* Remove button (fixed) */}
+
                                             <div className="flex-none w-[28px] h-[28px] flex items-center justify-center">
                                                 {experience.length > 1 && (
                                                     <button
@@ -471,8 +481,7 @@ const JobDashboard: React.FC = () => {
                                 <Select
                                     options={mode}
                                     placeholder="Select an option"
-                                // onChange={handleSelectChange}
-                                // className="dark:bg-dark-900"
+
                                 />
                             </div>
 
@@ -523,16 +532,8 @@ const JobDashboard: React.FC = () => {
 
                             <div>
                                 <Label>Total Marks</Label>
-                                <Input type="text" id="input" />
+                                <Input type="number" id="input" />
                             </div>
-
-                            {/* <div>
-                                <Label>Postal Code</Label>
-                                <Input type="text" value="ERT 2489" />
-                            </div> */}
-
-
-
 
                         </div>
                     </form>

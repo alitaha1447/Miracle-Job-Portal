@@ -20,6 +20,8 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 // import Home from "./pages/Dashboard/Home";
 import JobDashboard from "./pages/Dashboard/JobDashboard";
 import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
+import StudentDashboard from "./pages/Dashboard/StudentDashboard";
+import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
 
 export default function App() {
   return (
@@ -32,6 +34,8 @@ export default function App() {
             {/* <Route index path="/" element={<Home />} /> */}
             <Route index path="/" element={<JobDashboard />} />
             <Route index path="/participants-list" element={<ParticipantDashboard />} />
+            <Route index path="/student-dashboard" element={<StudentDashboard />} />
+            <Route index path="/college-dashboard" element={<CollegeDashboard />} />
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />

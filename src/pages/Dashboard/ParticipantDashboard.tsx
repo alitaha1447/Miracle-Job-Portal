@@ -11,6 +11,7 @@ import {
     TableRow,
 } from "../../components/ui/table";
 // import Badge from "../../components/ui/badge/Badge";
+import { BsThreeDotsVertical } from "react-icons/bs";
 import { Modal } from '../../components/ui/modal';
 import Button from "../../components/ui/button/Button";
 import Input from "../../components/form/input/InputField";
@@ -19,6 +20,8 @@ import TextArea from '../../components/form/input/TextArea';
 import Checkbox from '../../components/form/input/Checkbox';
 import { FiEye } from "react-icons/fi";
 import Select from "react-select";
+import { Dropdown } from '../../components/ui/dropdown/Dropdown';
+
 
 const role = [
     { value: "0", label: "Frontend Developer" },
@@ -31,10 +34,23 @@ const tableData = [{ name: 'Alex', applyDate: '20-02-2026', remark: 'Pending', s
 
 const ParticipantDashboard: React.FC = () => {
     // const [isChecked, setIsChecked] = useState<boolean>(false);
+    const [openStatusIdx, setOpenStatusIdx] = useState<number | null>(null);
+    const [scheduleInterview, setScheduleInterview] = useState(false)
     const [openInterview, setOpenInterview] = useState<boolean>(false)
+
+    const toggleScheduleInterview = () => {
+        setScheduleInterview(!scheduleInterview)
+    }
     const toggleInterview = () => {
         setOpenInterview(!openInterview)
     }
+
+    // Status menu (new)
+    const toggleStatusMenu = (idx: number) =>
+        setOpenStatusIdx(prev => (prev === idx ? null : idx));
+
+    const closeStatusMenu = () => setOpenStatusIdx(null);
+
     return (
         <>
             <div>
@@ -49,7 +65,7 @@ const ParticipantDashboard: React.FC = () => {
                             Participant List
                         </h3>
                         <button
-                            onClick={toggleInterview}
+                            onClick={toggleScheduleInterview}
                             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1"
                         >
                             Schedule Interview
@@ -108,6 +124,12 @@ const ParticipantDashboard: React.FC = () => {
                                             >
                                                 Status
                                             </TableCell>
+                                            <TableCell
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                            >
+                                                Action
+                                            </TableCell>
                                         </TableRow>
                                     </TableHeader>
 
@@ -143,7 +165,36 @@ const ParticipantDashboard: React.FC = () => {
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     {order.status}
                                                 </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                                                    <div className="relative inline-flex">
 
+                                                        <button
+                                                            onClick={() => toggleStatusMenu(index)}
+                                                            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
+                                                            aria-haspopup="menu"
+
+                                                            style={{ lineHeight: 0 }}
+                                                        >
+                                                            <BsThreeDotsVertical size={20} />
+                                                            <span className="sr-only">Open actions</span>
+                                                        </button>
+                                                        {/* Status dropdown */}
+                                                        <Dropdown
+                                                            isOpen={openStatusIdx === index}
+                                                            onClose={closeStatusMenu}
+                                                            className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                                        >
+                                                            <button
+                                                                onClick={toggleInterview}
+                                                                type="button"
+                                                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                                Start Interview
+                                                            </button>
+
+                                                        </Dropdown>
+                                                    </div>
+
+                                                </TableCell>
 
                                             </TableRow>
                                         ))}
@@ -155,6 +206,43 @@ const ParticipantDashboard: React.FC = () => {
                     {/* </ComponentCard> */}
                 </div>
             </div>
+            {/* Schedule Interview */}
+            <Modal isOpen={scheduleInterview} onClose={toggleScheduleInterview} className="max-w-xl">
+                <div className="relative w-full bg-white rounded-3xl dark:bg-gray-900 flex flex-col">
+
+                    {/* Header (fixed) */}
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                        <h4 className="mb-1 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                            Schedule Interview
+                        </h4>
+                    </div>
+
+                    {/* Body (scrollable) */}
+                    <form className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
+                        <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
+                            <div>
+                                <Label>Date</Label>
+                                <Input type="text" id="input" />
+                            </div>
+
+                            <div>
+                                <Label>Time</Label>
+                                <Input type="text" id="input" />
+                            </div>
+
+                        </div>
+                    </form>
+                    {/* Footer (fixed) */}
+                    <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 shrink-0">
+                        <div className="flex items-center gap-3 lg:justify-end">
+                            <Button size="sm" variant="outline" onClick={toggleScheduleInterview}>
+                                Close
+                            </Button>
+                            <Button size="sm">Submit</Button>
+                        </div>
+                    </div>
+                </div>
+            </Modal>
             <Modal isOpen={openInterview} onClose={toggleInterview} className="max-w-2xl ">
                 {/* Card container with fixed height and flex layout */}
                 <div className="relative w-full h-[85vh] bg-white rounded-3xl dark:bg-gray-900 flex flex-col">
@@ -169,16 +257,6 @@ const ParticipantDashboard: React.FC = () => {
                     {/* Body (scrollable) */}
                     <form className="flex-1 overflow-y-auto px-6 py-4 custom-scrollbar">
                         <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
-
-
-
-
-
-
-
-
-
-
                             <div>
                                 <Label>Name</Label>
                                 <Input type="text" id="input" />
@@ -188,11 +266,8 @@ const ParticipantDashboard: React.FC = () => {
                                 <Select
                                     options={role}
                                     placeholder="Select an option"
-
                                 />
                             </div>
-
-
                             <div>
                                 <Label>Marks</Label>
                                 <Input type="text" id="input" />
@@ -205,14 +280,8 @@ const ParticipantDashboard: React.FC = () => {
                                     rows={6}
                                 />
                             </div>
-
-
-
-
-
                         </div>
                     </form>
-
                     {/* Footer (fixed) */}
                     <div className="px-6 py-4 border-t border-gray-100 dark:border-gray-800 shrink-0">
                         <div className="flex items-center gap-3 lg:justify-end">
