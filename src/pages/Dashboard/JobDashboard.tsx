@@ -72,7 +72,7 @@ const mode = [
 
 const tableData = [
 
-    { role: 'Developer', skill: 'HTML, CSS, Javascript', salary: 25000, jobType: 'Full Time', desc: 'Full Time	', status: 'Hold', assignedBy: 5 },
+    { role: 'Developer', skill: 'HTML, CSS, Javascript', qualification: 'BE', salary: 25000, age: 20, jobType: 'Full Time', desc: 'Full Time	', status: 'Hold', date: '20/20/2025', assignedBy: 5 },
     { role: 'Accountant', skill: 'Tally, SAP', salary: 25000, jobType: 'Full Time', desc: 'Full Time	', status: 'Posted', assignedBy: 8 },
     { role: 'IT', skill: 'HTML, CSS, Javascript', salary: 25000, jobType: 'Full Time', desc: 'Full Time	', status: 'Draft', assignedBy: 0 },
     { role: 'Operator', skill: 'HTML, CSS, Javascript', salary: 15000, jobType: 'Full Time', desc: 'Full Time	', status: 'Completed', assignedBy: 1 },
@@ -179,7 +179,7 @@ const JobDashboard: React.FC = () => {
                         </div>
 
                         {/* Card Body */}
-                        <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+                        <div className="hidden lg:block p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                             <div className="space-y-6">
                                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                                     <div className="max-w-full overflow-x-auto">
@@ -189,46 +189,64 @@ const JobDashboard: React.FC = () => {
                                                 <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                                     <TableRow>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Role
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Skill
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
+                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                                        >
+                                                            Min Qualification
+                                                        </TableCell>
+                                                        <TableCell
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Salary
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
+                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                                        >
+                                                            Min /Max age
+                                                        </TableCell>
+                                                        <TableCell
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Job Type
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Job Description
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
                                                             Status
                                                         </TableCell>
                                                         <TableCell
-                                                            // isHeader
+                                                            isHeader
                                                             className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                                                         >
-                                                            Assigned By
+                                                            Last Submission Date
+                                                        </TableCell>
+                                                        <TableCell
+                                                            isHeader
+                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                                                        >
+                                                            Total Applicant
 
                                                         </TableCell>
                                                         <TableCell
@@ -253,6 +271,14 @@ const JobDashboard: React.FC = () => {
                                                                 {order.skill}
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+
+                                                                {order.qualification}
+                                                            </TableCell>
+                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                                {order.salary}
+
+                                                            </TableCell>
+                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                                 {order.salary}
 
                                                             </TableCell>
@@ -266,7 +292,7 @@ const JobDashboard: React.FC = () => {
                                                                 <div className="relative inline-flex">
 
                                                                     <button
-                                                                        type="button"
+                                                                        // type="button"
                                                                         onClick={() => toggleStatusMenu(idx)}
                                                                         className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
 
@@ -281,7 +307,7 @@ const JobDashboard: React.FC = () => {
                                                                         className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
                                                                     >
                                                                         <button
-                                                                            type="button"
+                                                                            // type="button"
                                                                             className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
                                                                             Update Status
                                                                         </button>
@@ -289,6 +315,9 @@ const JobDashboard: React.FC = () => {
                                                                     </Dropdown>
                                                                 </div>
 
+                                                            </TableCell>
+                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                {order.date}
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 {order.assignedBy}
@@ -305,40 +334,24 @@ const JobDashboard: React.FC = () => {
                                                                         <BsThreeDotsVertical size={20} />
                                                                         <span className="sr-only">Open actions</span>
                                                                     </button>
+                                                                    {openMenuIdx === idx && (
+                                                                        <div
+                                                                            className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                                                            onClick={closeMenu}
+                                                                        >
+                                                                            <button
+                                                                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                                                                                onClick={() => {
+                                                                                    navigate("/participants-list");
+                                                                                    closeMenu();
+                                                                                }}
+                                                                            >
+                                                                                View Participants
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
 
-                                                                    <Dropdown
-                                                                        isOpen={openMenuIdx === idx}
-                                                                        onClose={closeMenu}
-                                                                        className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                    >
-                                                                        <button
-                                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                            onClick={() => { navigate("/participants-list"); closeMenu(); }}
-                                                                        >
-                                                                            View Participants
-                                                                        </button>
-                                                                        {/* <button
-                                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                            onClick={() => { console.log('Edit Job', order); closeMenu(); }}
-                                                                        >
-                                                                            Edit Job
-                                                                        </button>
-                                                                        <button
-                                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                            onClick={() => { console.log('Duplicate', order); closeMenu(); }}
-                                                                        >
-                                                                            Duplicate
-                                                                        </button>
 
-                                                                        <div className="my-2 h-px bg-gray-200 dark:bg-gray-800" />
-
-                                                                        <button
-                                                                            className="w-full text-left px-3 py-2 rounded-md text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                                                                            onClick={() => { console.log('Delete', order); closeMenu(); }}
-                                                                        >
-                                                                            Delete
-                                                                        </button> */}
-                                                                    </Dropdown>
                                                                 </div>
                                                             </TableCell>
 
@@ -350,6 +363,121 @@ const JobDashboard: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        {/*  */}
+                        {/* Mobile Card View */}
+                        <div className="lg:hidden overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                            {tableData.map((item, index) => (
+                                <div
+                                    key={index}
+                                    className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] flex flex-col gap-3"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            {/* <Checkbox /> */}
+                                            <div>
+                                                <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                                                    {index + 1}. {item.role}
+                                                </h4>
+                                                <p className="text-xs text-gray-500">{item.status}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="relative inline-flex">
+                                            <button
+                                                onClick={() => toggleRowMenu(index)}
+                                                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
+                                                aria-haspopup="menu"
+                                                aria-expanded={openMenuIdx === index}
+                                                style={{ lineHeight: 0 }}
+                                            >
+                                                <BsThreeDotsVertical size={20} />
+                                                <span className="sr-only">Open actions</span>
+                                            </button>
+                                            {openMenuIdx === index && (
+                                                <div
+                                                    className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                                    onClick={closeMenu}
+                                                >
+                                                    <button
+                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                                                        onClick={() => {
+                                                            navigate("/participants-list");
+                                                            closeMenu();
+                                                        }}
+                                                    >
+                                                        View Participants
+                                                    </button>
+                                                </div>
+                                            )}
+
+
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-2 text-sm">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Skills</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.skill}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Qualification</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.qualification || "N/A"}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Salary</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">₹{item.salary}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Age</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.age || "N/A"}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Job Type</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.jobType}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Last Date</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.date}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Applicants</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.assignedBy}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="pt-2 flex flex-col gap-2">
+                                        <div className="relative inline-flex self-start">
+                                            <button
+                                                type="button"
+                                                // onClick={() => toggleStatusMenu(index)}
+                                                className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
+                                            >
+                                                {item.status}
+                                            </button>
+                                            {/* Status dropdown */}
+                                            {/* <Dropdown
+                                                // isOpen={openStatusMenuIdx === index}
+                                                onClose={closeStatusMenu}
+                                                className="absolute left-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                            >
+                                                <button
+                                                    type="button"
+                                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                    Update Status
+                                                </button>
+                                            </Dropdown> */}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
+                                        >
+                                            {/* <FiEye className="text-sm" /> View Description */}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -386,7 +514,7 @@ const JobDashboard: React.FC = () => {
                                 />
                             </div>
 
-                            <div>
+                            <div className='lg:col-span-2'>
                                 <Label>Job Description</Label>
                                 <ReactQuill theme="snow" value={value} onChange={setValue} />
                             </div>
@@ -418,8 +546,23 @@ const JobDashboard: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div >
-                                <div className="flex items-center justify-between mb-2">
+                            <div>
+                                <Label>Interview Mode</Label>
+                                <Select
+                                    options={mode}
+                                    placeholder="Select an option"
+
+                                />
+                            </div>
+
+
+                            <div>
+                                <Label>Total Marks</Label>
+                                <Input type="number" id="input" />
+                            </div>
+
+                            <div className='lg:col-span-2'>
+                                <div className="flex items-center gap-5 mb-2">
                                     <Label>Min Experience (Skill-wise)</Label>
 
                                     <div className="flex items-center gap-2">
@@ -476,19 +619,9 @@ const JobDashboard: React.FC = () => {
                             </div>
 
 
-                            <div>
-                                <Label>Interview Mode</Label>
-                                <Select
-                                    options={mode}
-                                    placeholder="Select an option"
 
-                                />
-                            </div>
-
-
-
-                            <div>
-                                <div className="flex items-center justify-between mb-2">
+                            <div className='lg:col-span-2'>
+                                <div className="flex items-center gap-5 mb-2">
                                     <Label>Interview Round</Label>
 
                                     <button
@@ -505,7 +638,7 @@ const JobDashboard: React.FC = () => {
                                     {interviewStructure.map((_, index) => (
                                         <div
                                             key={index}
-                                            className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(240px,1fr)_40px]"
+                                            className="grid grid-cols-1 gap-3 md:grid-cols-[minmax(240px,420px)_40px]"
                                         >
                                             {/* Interview Mode Select */}
                                             <div>
@@ -530,10 +663,6 @@ const JobDashboard: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div>
-                                <Label>Total Marks</Label>
-                                <Input type="number" id="input" />
-                            </div>
 
                         </div>
                     </form>

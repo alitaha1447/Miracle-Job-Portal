@@ -22,6 +22,8 @@ import JobDashboard from "./pages/Dashboard/JobDashboard";
 import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
+import PrivateLayout from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 
 export default function App() {
   return (
@@ -30,40 +32,45 @@ export default function App() {
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            {/* <Route index path="/" element={<Home />} /> */}
-            <Route index path="/" element={<JobDashboard />} />
-            <Route index path="/participants-list" element={<ParticipantDashboard />} />
-            <Route index path="/student-dashboard" element={<StudentDashboard />} />
-            <Route index path="/college-dashboard" element={<CollegeDashboard />} />
+          <Route element={<PrivateLayout />}>
 
-            {/* Others Page */}
-            <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
+            <Route element={<AppLayout />}>
+              {/* <Route index path="/" element={<Home />} /> */}
+              <Route path="/" element={<JobDashboard />} />
+              <Route path="/participants-list" element={<ParticipantDashboard />} />
+              <Route path="/student-dashboard" element={<StudentDashboard />} />
+              <Route path="/college-dashboard" element={<CollegeDashboard />} />
 
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
+              {/* Others Page */}
+              <Route path="/profile" element={<UserProfiles />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/blank" element={<Blank />} />
 
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+              {/* Forms */}
+              <Route path="/form-elements" element={<FormElements />} />
 
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+              {/* Tables */}
+              <Route path="/basic-tables" element={<BasicTables />} />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
+              {/* Ui Elements */}
+              <Route path="/alerts" element={<Alerts />} />
+              <Route path="/avatars" element={<Avatars />} />
+              <Route path="/badge" element={<Badges />} />
+              <Route path="/buttons" element={<Buttons />} />
+              <Route path="/images" element={<Images />} />
+              <Route path="/videos" element={<Videos />} />
+
+              {/* Charts */}
+              <Route path="/line-chart" element={<LineChart />} />
+              <Route path="/bar-chart" element={<BarChart />} />
+            </Route>
           </Route>
 
           {/* Auth Layout */}
+          {/* <Route element={<PublicRoute />}> */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
+          {/* </Route> */}
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />

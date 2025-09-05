@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 
 interface LabelProps {
   htmlFor?: string;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
 }
 

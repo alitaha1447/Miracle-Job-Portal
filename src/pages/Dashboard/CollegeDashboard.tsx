@@ -45,7 +45,8 @@ const CollegeDashboard: React.FC = () => {
                     {/* Card Body */}
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                         <div className="space-y-6">
-                            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                            {/* TABLE — visible on md and above */}
+                            <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                                 <div className="max-w-full overflow-x-auto">
                                     <div className="min-w-[1102px]">
                                         <Table>
@@ -110,64 +111,7 @@ const CollegeDashboard: React.FC = () => {
                                                         <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                             {order.status}
                                                         </TableCell>
-                                                        {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <div className="relative inline-flex">
 
-                                                                <button
-                                                                    type="button"
-                                                                    // onClick={() => toggleStatusMenu(idx)}
-                                                                    className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-
-
-                                                                >
-                                                                    {order.status}
-                                                                </button>
-                                                                <Dropdown
-                                                                    isOpen={openStatusIdx === idx}
-                                                                    onClose={closeStatusMenu}
-                                                                    className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                >
-                                                                    <button
-                                                                        type="button"
-                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                        Update Status
-                                                                    </button>
-
-                                                                </Dropdown>
-                                                            </div>
-
-                                                        </TableCell> */}
-                                                        {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            {order.assignedBy}
-                                                        </TableCell> */}
-                                                        {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <div className="relative inline-flex">
-                                                                <button
-                                                                    // onClick={() => toggleRowMenu(idx)}
-                                                                    className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                                                                    aria-haspopup="menu"
-                                                                    // aria-expanded={openMenuIdx === idx}
-                                                                    style={{ lineHeight: 0 }}
-                                                                >
-                                                                    <BsThreeDotsVertical size={20} />
-                                                                    <span className="sr-only">Open actions</span>
-                                                                </button>
-
-                                                                <Dropdown
-                                                                        isOpen={openMenuIdx === idx}
-                                                                        onClose={closeMenu}
-                                                                        className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                    >
-                                                                        <button
-                                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                            onClick={() => { navigate("/participants-list"); closeMenu(); }}
-                                                                        >
-                                                                            View Participants
-                                                                        </button>
-                                                                       
-                                                                    </Dropdown>
-                                                            </div>
-                                                        </TableCell> */}
 
                                                     </TableRow>
                                                 ))}
@@ -175,6 +119,47 @@ const CollegeDashboard: React.FC = () => {
                                         </Table>
                                     </div>
                                 </div>
+                            </div>
+                            {/* CARDS — visible below lg */}
+                            <div className="lg:hidden grid grid-cols-1 gap-4">
+                                {tableData.map((item) => {
+                                    // const theme = getStatusTheme(item.status);
+                                    return (
+                                        <div
+                                            key={item.id}
+                                            className={`rounded-2xl border p-4 shadow-sm `}
+                                        >
+                                            {/* Top row: ID + Status */}
+                                            <div className="flex items-start justify-between gap-3">
+                                                <div>
+                                                    <div className="text-[11px] uppercase tracking-wide text-gray-500">ID</div>
+                                                    <div className="text-sm font-semibold text-gray-800">{item.id}</div>
+                                                </div>
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium `}
+                                                >
+                                                    <span className={`h-1.5 w-1.5 rounded-full `} />
+                                                    {item.status.trim()}
+                                                </span>
+                                            </div>
+
+                                            {/* Main details */}
+                                            <div className="mt-3">
+                                                <div className="text-base font-semibold text-gray-900">{item.student}</div>
+                                                <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-gray-600">Job</span>
+                                                        <span className="font-medium text-gray-900">{item.job}</span>
+                                                    </div>
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-gray-600">Company</span>
+                                                        <span className="font-medium text-gray-900">{item.company}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>

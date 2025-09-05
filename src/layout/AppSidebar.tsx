@@ -117,8 +117,6 @@ const AppSidebar: React.FC = () => {
     [location.pathname]
   );
 
-  const roleType = localStorage.getItem("role");
-  console.log(roleType);
 
   useEffect(() => {
     let submenuMatched = false;
@@ -187,7 +185,7 @@ const AppSidebar: React.FC = () => {
     return (
       <ul className="flex flex-col gap-4">
         {items.map((nav, index) => {
-          console.log(nav?.subItems)
+          // console.log(nav?.subItems)
           const isDashboard = nav.name === "Dashboard";
 
           const subItems =
@@ -311,14 +309,14 @@ const AppSidebar: React.FC = () => {
             <>
               <img
                 className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/images/logo/MiracleInfoserv.png"
                 alt="Logo"
                 width={150}
                 height={40}
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                src="/images/logo/m.png"
                 alt="Logo"
                 width={150}
                 height={40}
@@ -326,7 +324,7 @@ const AppSidebar: React.FC = () => {
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+              src="/images/logo/m.png"
               alt="Logo"
               width={32}
               height={32}
