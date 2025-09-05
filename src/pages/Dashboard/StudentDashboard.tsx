@@ -7,16 +7,16 @@ import {
     TableRow,
 } from "../../components/ui/table";
 // import { BsThreeDotsVertical } from "react-icons/bs";
-import Select from "react-select";
-import Input from "../../components/form/input/InputField";
+// import Select from "react-select";
+// import Input from "../../components/form/input/InputField";
 import { FiSearch, FiMapPin, FiChevronDown, FiX } from "react-icons/fi";
 
 
-const role = [
-    { value: "0", label: "Frontend Developer" },
-    { value: "1", label: "Backend Developer" },
-    { value: "2", label: "QA tester" },
-]
+// const role = [
+//     { value: "0", label: "Frontend Developer" },
+//     { value: "1", label: "Backend Developer" },
+//     { value: "2", label: "QA tester" },
+// ]
 
 const tableData = [
 

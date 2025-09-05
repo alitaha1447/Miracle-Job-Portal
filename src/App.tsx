@@ -23,7 +23,7 @@ import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
 import PrivateLayout from "./PrivateRoute";
-import PublicRoute from "./PublicRoute";
+// import PublicRoute from "./PublicRoute";
 
 export default function App() {
   return (
