@@ -3,8 +3,8 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useNavigate } from "react-router";
 import { useAppDispatch } from "../../app/store";
-// import { logout } from "../../features/auth/authSlice"; // removed: module not found
-// import { persistor } from "../../app/store";
+import { persistor } from "../../app/store";
+import { logout } from "../../feature/auth/authSlice";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,12 +18,11 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
-
-  function handleSignOut() {
-    dispatch({ type: "auth/logout" } as any);
-    // persistor.purge(); // ✅ clear persisted storage (safe here)
-    navigate("/signin"); // Redirect to login
-    localStorage.removeItem("role");
+  async function handleSignOut() {
+    dispatch(logout());                     // reset slice in memory
+    await persistor.flush();                // write pending state
+    await persistor.purge();                // clear persisted storage
+    navigate("/signin");
   }
   return (
     <div className="relative">

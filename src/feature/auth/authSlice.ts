@@ -3,12 +3,13 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 
 
 interface AuthState {
-    // isAuthenticated: boolean;
-    user: null | { email: string }; // adjust fields as per your app
+    user: null | {
+        email: string;
+        userType: string;
+    };
 }
 
 const initialState: AuthState = {
-    // isAuthenticated: false,
     user: null,
 };
 
@@ -16,13 +17,11 @@ export const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        login(state, action: PayloadAction<AuthState["user"]>) {
-            console.log(action.payload)
-            // state.isAuthenticated = true;
+        login(state, action: PayloadAction<{ email: string; userType: string }>) {
+            console.log(action.payload);
             state.user = action.payload;
         },
         logout(state) {
-            // state.isAuthenticated = false;
             state.user = null;
         },
     },

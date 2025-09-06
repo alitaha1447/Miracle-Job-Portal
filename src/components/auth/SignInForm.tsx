@@ -31,9 +31,9 @@ export default function SignInForm() {
       return;
     }
 
-    dispatch(login({ email: email }))
+    dispatch(login({ email, userType }));
     // console.log(userType)
-    localStorage.setItem("role", userType);
+    // localStorage.setItem("role", userType);
     // Navigate based on user type
     if (userType === "Student") {
       navigate("/student-dashboard");  // Navigate to student dashboard

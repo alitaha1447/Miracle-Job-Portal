@@ -3,10 +3,26 @@ import { Navigate, Outlet } from 'react-router'
 import { useAppSelector } from './app/store'
 
 const PublicRoute: React.FC = () => {
-    const { user } = useAppSelector((s) => s.auth);
+    console.log('PublicRoute rendered');
+    const { user } = useAppSelector((state) => state.auth);
+
     console.log(user)
-    // If logged in, block access to auth pages
-    return !user ? <Outlet /> : <Navigate to="/" replace />;
+    // If NOT logged in → allow access to login/register pages
+    if (!user) {
+        return <Outlet />;
+    }
+
+    // If logged in → redirect based on userType
+    switch (user.userType) {
+        case "Student":
+            return <Navigate to="/student-dashboard" replace />;
+        case "Company":
+            return <Navigate to="/" replace />;
+        case "College":
+            return <Navigate to="/college-dashboard" replace />;
+        default:
+            return <Navigate to="/" replace />; // fallback
+    }
 };
 
 export default PublicRoute

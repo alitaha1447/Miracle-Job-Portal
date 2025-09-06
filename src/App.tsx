@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -23,7 +23,29 @@ import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
 import PrivateLayout from "./PrivateRoute";
-// import PublicRoute from "./PublicRoute";
+import PublicRoute from "./PublicRoute";
+import { useAppSelector } from "./app/store";
+
+const ROLE_HOME: Record<string, string> = {
+  Student: "/student-dashboard",
+  Company: "/",
+  College: "/college-dashboard"
+};
+
+function RequireRole({ role }: { role: string }) {
+  const { user } = useAppSelector((s) => s.auth);
+  // not logged in → send to signin
+  if (!user) {
+    return <Navigate to="/signin" replace state={{ from: location }} />;
+  }
+  // logged in but wrong role → bounce to their own home
+  if (user.userType !== role) {
+    return <Navigate to={ROLE_HOME[user.userType]} replace />;
+  }
+  return <Outlet />;
+}
+
+
 
 export default function App() {
   return (
@@ -36,10 +58,21 @@ export default function App() {
 
             <Route element={<AppLayout />}>
               {/* <Route index path="/" element={<Home />} /> */}
-              <Route path="/" element={<JobDashboard />} />
+              <Route element={<RequireRole role='Company' />}>
+
+                <Route path="/" element={<JobDashboard />} />
+              </Route>
+              {/* STUDENT-ONLY ROUTES */}
+              <Route element={<RequireRole role="Student" />}>
+                <Route path="/student-dashboard" element={<StudentDashboard />} />
+              </Route>
               <Route path="/participants-list" element={<ParticipantDashboard />} />
-              <Route path="/student-dashboard" element={<StudentDashboard />} />
-              <Route path="/college-dashboard" element={<CollegeDashboard />} />
+              {/* COLLEGE-ONLY ROUTES */}
+              <Route element={<RequireRole role="College" />}>
+                <Route path="/college-dashboard" element={<CollegeDashboard />} />
+              </Route>
+              {/* <Route path="/student-dashboard" element={<StudentDashboard />} /> */}
+              {/* <Route path="/college-dashboard" element={<CollegeDashboard />} /> */}
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
@@ -67,10 +100,10 @@ export default function App() {
           </Route>
 
           {/* Auth Layout */}
-          {/* <Route element={<PublicRoute />}> */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          {/* </Route> */}
+          <Route element={<PublicRoute />}>
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+          </Route>
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />

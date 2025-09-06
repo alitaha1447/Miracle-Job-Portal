@@ -16,7 +16,8 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
+import { useAppSelector } from "../app/store";
+// import SidebarWidget from "./SidebarWidget";
 
 type NavItem = {
   name: string;
@@ -117,6 +118,8 @@ const AppSidebar: React.FC = () => {
     [location.pathname]
   );
 
+  const roleType = useAppSelector((state) => state.auth.user?.userType);
+
 
   useEffect(() => {
     let submenuMatched = false;
@@ -180,7 +183,6 @@ const AppSidebar: React.FC = () => {
 
   const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => {
 
-    const roleType = localStorage.getItem("role");
 
     return (
       <ul className="flex flex-col gap-4">
@@ -367,7 +369,7 @@ const AppSidebar: React.FC = () => {
             </div>
           </div>
         </nav>
-        {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null}
+        {/* {isExpanded || isHovered || isMobileOpen ? <SidebarWidget /> : null} */}
       </div>
     </aside>
   );

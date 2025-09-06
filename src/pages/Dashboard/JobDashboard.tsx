@@ -22,7 +22,22 @@ import Label from "../../components/form/Label";
 // import Select from '../../components/form/Select';
 import ReactQuill from 'react-quill';
 import Select from "react-select";
-import { Dropdown } from '../../components/ui/dropdown/Dropdown';
+// import { Dropdown } from '../../components/ui/dropdown/Dropdown';
+
+// interface Item {
+//     name: string;
+//     status: string;
+// }
+
+const STATUS_OPTIONS = [
+    "Hold",
+    "Posted",
+    "Draft",
+    "Completed",
+    "Cancelled",
+];
+
+
 
 // const options = [
 //     { value: "marketing", label: "Marketing" },
@@ -68,15 +83,20 @@ const mode = [
     { value: "0", label: "Online" },
     { value: "1", label: "Offline" },
 ]
+const jobMode = [
+    { value: "0", label: "Onsite" },
+    { value: "1", label: "Hybrid" },
+    { value: "2", label: "WFH" },
+]
 
 
 const tableData = [
 
-    { role: 'Developer', skill: 'HTML, CSS, Javascript', qualification: 'BE', salary: 25000, age: 20, jobType: 'Full Time', desc: 'Full Time	', status: 'Hold', date: '20/20/2025', assignedBy: 5 },
-    { role: 'Accountant', skill: 'Tally, SAP', salary: 25000, jobType: 'Full Time', desc: 'Full Time	', status: 'Posted', assignedBy: 8 },
-    { role: 'IT', skill: 'HTML, CSS, Javascript', salary: 25000, jobType: 'Full Time', desc: 'Full Time	', status: 'Draft', assignedBy: 0 },
-    { role: 'Operator', skill: 'HTML, CSS, Javascript', salary: 15000, jobType: 'Full Time', desc: 'Full Time	', status: 'Completed', assignedBy: 1 },
-    { role: 'HR', skill: 'Communication, Excel, Word', salary: 5000, jobType: 'Intern', desc: 'Intern	', status: 'Hold', assignedBy: 15 },
+    { role: 'Developer', skill: 'HTML, CSS, Javascript', qualification: 'BE', salary: 25000, age: '20 - 29', jobType: 'Full Time', desc: 'Full Time	', status: 'Hold', date: '20/20/2025', assignedBy: 5 },
+    { role: 'Accountant', skill: 'Tally, SAP', salary: 25000, age: '20 - 29', jobType: 'Full Time', desc: 'Full Time	', status: 'Posted', assignedBy: 8 },
+    { role: 'IT', skill: 'HTML, CSS, Javascript', salary: 25000, age: '20 - 29', jobType: 'Full Time', desc: 'Full Time	', status: 'Draft', assignedBy: 0 },
+    { role: 'Operator', skill: 'HTML, CSS, Javascript', salary: 15000, age: '20 - 29', jobType: 'Full Time', desc: 'Full Time	', status: 'Completed', assignedBy: 1 },
+    { role: 'HR', skill: 'Communication, Excel, Word', salary: 5000, age: '20 - 29', jobType: 'Intern', desc: 'Intern	', status: 'Hold', assignedBy: 15 },
 ]
 
 // const courseFeesOptions = [
@@ -94,7 +114,7 @@ const tableData = [
 const JobDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
-    const [openStatusIdx, setOpenStatusIdx] = useState<number | null>(null);
+    // const [openStatusIdx, setOpenStatusIdx] = useState<number | null>(null);
     const [openPostJob, setOpenPostJob] = useState<boolean>(false)
     const [value, setValue] = useState<string>('');
 
@@ -107,6 +127,14 @@ const JobDashboard: React.FC = () => {
         { interviewMode: null }
     ])
 
+    const [rows, setRows] = useState(tableData);
+
+
+    // Update a specific row's status
+    const handleStatusChange = (rowIndex: number, newStatus: string) => {
+        setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, status: newStatus } : r)));
+    };
+
 
 
 
@@ -116,10 +144,10 @@ const JobDashboard: React.FC = () => {
     const closeMenu = () => setOpenMenuIdx(null);
 
     // Status menu (new)
-    const toggleStatusMenu = (idx: number) =>
-        setOpenStatusIdx(prev => (prev === idx ? null : idx));
+    // const toggleStatusMenu = (idx: number) =>
+    //     setOpenStatusIdx(prev => (prev === idx ? null : idx));
 
-    const closeStatusMenu = () => setOpenStatusIdx(null);
+    // const closeStatusMenu = () => setOpenStatusIdx(null);
 
 
 
@@ -279,16 +307,22 @@ const JobDashboard: React.FC = () => {
 
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.salary}
+                                                                {order.age}
 
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 {order.jobType}
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.desc}
+                                                                <button
+                                                                    // type="button"
+
+                                                                    className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
+                                                                >
+                                                                    {order.desc}
+                                                                </button>
                                                             </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 <div className="relative inline-flex">
 
                                                                     <button
@@ -300,7 +334,7 @@ const JobDashboard: React.FC = () => {
                                                                     >
                                                                         {order.status}
                                                                     </button>
-                                                                    {/* Status dropdown */}
+                                                                 
                                                                     <Dropdown
                                                                         isOpen={openStatusIdx === idx}
                                                                         onClose={closeStatusMenu}
@@ -315,12 +349,58 @@ const JobDashboard: React.FC = () => {
                                                                     </Dropdown>
                                                                 </div>
 
+                                                            </TableCell> */}
+                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                                                                <div className="relative inline-flex">
+                                                                    <select
+                                                                        value={rows[idx].status}
+                                                                        onChange={(e) => handleStatusChange(idx, e.target.value)}
+                                                                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                               bg-white text-gray-700 hover:opacity-90 transition
+                                               focus:outline-none focus:ring focus:ring-brand-500/10
+                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                                                                    >
+                                                                        {STATUS_OPTIONS.map((opt) => (
+                                                                            <option
+                                                                                key={opt}
+                                                                                value={opt}
+                                                                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                                                                            >
+                                                                                {opt}
+                                                                            </option>
+                                                                        ))}
+                                                                    </select>
+
+                                                                    {/* Chevron */}
+                                                                    <svg
+                                                                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                                                                        viewBox="0 0 20 20"
+                                                                        fill="currentColor"
+                                                                        aria-hidden="true"
+                                                                    >
+                                                                        <path
+                                                                            fillRule="evenodd"
+                                                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                                                                            clipRule="evenodd"
+                                                                        />
+                                                                    </svg>
+                                                                </div>
                                                             </TableCell>
+
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 {order.date}
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.assignedBy}
+                                                                <button
+                                                                    className="text-center text-[black] px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                                                                    onClick={() => {
+                                                                        navigate("/participants-list");
+                                                                        closeMenu();
+                                                                    }}
+                                                                >
+                                                                    {order.assignedBy}
+                                                                </button>
+
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 <div className="relative inline-flex">
@@ -350,11 +430,8 @@ const JobDashboard: React.FC = () => {
                                                                             </button>
                                                                         </div>
                                                                     )}
-
-
                                                                 </div>
                                                             </TableCell>
-
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
@@ -379,7 +456,24 @@ const JobDashboard: React.FC = () => {
                                                 <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
                                                     {index + 1}. {item.role}
                                                 </h4>
-                                                <p className="text-xs text-gray-500">{item.status}</p>
+                                                <select
+                                                    value={rows[index].status}
+                                                    onChange={(e) => handleStatusChange(index, e.target.value)}
+                                                    className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                               bg-white text-gray-700 hover:opacity-90 transition
+                                               focus:outline-none focus:ring focus:ring-brand-500/10
+                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                                                >
+                                                    {STATUS_OPTIONS.map((opt) => (
+                                                        <option
+                                                            key={opt}
+                                                            value={opt}
+                                                            className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                                                        >
+                                                            {opt}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </div>
                                         </div>
 
@@ -430,7 +524,7 @@ const JobDashboard: React.FC = () => {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500">Age</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.age || "N/A"}</span>
+                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.age}</span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500">Job Type</span>
@@ -442,40 +536,57 @@ const JobDashboard: React.FC = () => {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-gray-500">Applicants</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.assignedBy}</span>
+                                            <button
+                                                className="text-center text-[black] px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                                                onClick={() => {
+                                                    navigate("/participants-list");
+                                                    closeMenu();
+                                                }}
+                                            >
+                                                {item.assignedBy}
+                                            </button>
                                         </div>
-                                    </div>
-
-                                    <div className="pt-2 flex flex-col gap-2">
-                                        <div className="relative inline-flex self-start">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-gray-500">Job Description</span>
                                             <button
                                                 type="button"
                                                 // onClick={() => toggleStatusMenu(index)}
                                                 className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
                                             >
+                                                {item.desc}
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* <div className="pt-2 flex flex-col gap-2">
+                                        <div className="relative inline-flex self-start">
+                                            <button
+                                                type="button"
+                                                onClick={() => toggleStatusMenu(index)}
+                                                className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
+                                            >
                                                 {item.status}
                                             </button>
-                                            {/* Status dropdown */}
-                                            {/* <Dropdown
-                                                // isOpen={openStatusMenuIdx === index}
-                                                onClose={closeStatusMenu}
-                                                className="absolute left-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                            >
-                                                <button
-                                                    type="button"
-                                                    className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                    Update Status
-                                                </button>
-                                            </Dropdown> */}
+                                          
+                                            {openStatusIdx === index && (
+                                                <div
+                                                    className="absolute left-0  top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                                >
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => toggleStatusMenu(index)}
+
+                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                        Update Status
+                                                    </button>
+
+                                                </div>
+                                            )}
+                                           
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
-                                        >
-                                            {/* <FiEye className="text-sm" /> View Description */}
-                                        </button>
-                                    </div>
+                                     
+                                    </div> */}
                                 </div>
                             ))}
                         </div>
@@ -550,6 +661,14 @@ const JobDashboard: React.FC = () => {
                                 <Label>Interview Mode</Label>
                                 <Select
                                     options={mode}
+                                    placeholder="Select an option"
+
+                                />
+                            </div>
+                            <div>
+                                <Label>Job Mode</Label>
+                                <Select
+                                    options={jobMode}
                                     placeholder="Select an option"
 
                                 />
@@ -673,7 +792,7 @@ const JobDashboard: React.FC = () => {
                             <Button size="sm" variant="outline" onClick={togglePostJob}>
                                 Close
                             </Button>
-                            <Button size="sm">Save Job</Button>
+                            <Button size="sm" onClick={togglePostJob}>Save Job</Button>
                         </div>
                     </div>
                 </div>
