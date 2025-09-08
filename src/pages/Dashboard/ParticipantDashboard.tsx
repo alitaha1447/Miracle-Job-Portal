@@ -49,6 +49,8 @@ const ParticipantDashboard: React.FC = () => {
     const [desktopOpenStatusIdx, setDesktopOpenStatusIdx] = useState<number | null>(null);
     const [mobileOpenStatusIdx, setMobileOpenStatusIdx] = useState<number | null>(null);
     const [scheduleInterview, setScheduleInterview] = useState(false)
+    // const [scheduleForIdx, setScheduleForIdx] = useState<number | null>(null);
+
     const [uploadLetter, setUploadLetter] = useState(false)
     const [date, setDate] = useState<Date | null>(null);
     const [time, setTime] = useState<Date | null>(null);
@@ -58,6 +60,8 @@ const ParticipantDashboard: React.FC = () => {
     // const [selectedInterviwer, setSelectedInterviwer] = useState<null | number>(null)
 
     const [rows, setRows] = useState(tableData);
+
+    const [observation, setObservation] = useState<string>('')
 
 
     // Update a specific row's status
@@ -76,6 +80,7 @@ const ParticipantDashboard: React.FC = () => {
 
     // With useCallback - same function unless dependencies change
     const toggleScheduleInterview = useCallback(() => {
+        // setScheduleForIdx(idx)
         setScheduleInterview(prev => !prev);
     }, []);
 
@@ -310,6 +315,12 @@ const ParticipantDashboard: React.FC = () => {
                                                                         className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
                                                                         Schedule Interview
                                                                     </button>
+                                                                    <button
+                                                                        // onClick={toggleScheduleInterview}
+                                                                        type="button"
+                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                                        Send Intimation
+                                                                    </button>
                                                                 </div>
                                                             )}
                                                         </div>
@@ -428,6 +439,12 @@ const ParticipantDashboard: React.FC = () => {
                                                         type="button"
                                                         className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
                                                         Schedule Interview
+                                                    </button>
+                                                    <button
+                                                        // onClick={toggleScheduleInterview}
+                                                        type="button"
+                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                        Send Intimation
                                                     </button>
                                                 </div>
                                             )}
@@ -622,7 +639,8 @@ const ParticipantDashboard: React.FC = () => {
                                 <Label>Observation</Label>
                                 <TextArea
                                     rows={6}
-                                />
+                                    value={observation}
+                                    onChange={setObservation} />
                             </div>
                         </div>
                     </form>

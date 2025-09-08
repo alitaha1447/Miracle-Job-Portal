@@ -8,6 +8,15 @@ import {
 } from "../../components/ui/table";
 // import { BsThreeDotsVertical } from "react-icons/bs";
 
+import { FaUsers } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
+import { GoXCircle } from "react-icons/go";
+import { FaCalendarCheck } from "react-icons/fa";
+import { FaBriefcase } from "react-icons/fa";
+
+
+
+
 const tableData = [
 
     { id: 1, student: 'Taha Ali', job: 'Developer', company: 'Miracle', status: 'Joined	', },
@@ -18,13 +27,7 @@ const tableData = [
 const CollegeDashboard: React.FC = () => {
     return (
         <div>
-            {/* <PageMeta
-                title="React.js Basic Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-                description="This is React.js Basic Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
-            /> */}
-            {/* <PageBreadcrumb pageTitle="Basic Tables" /> */}
             <div className="space-y-6">
-                {/* <ComponentCard title="Jobs List"> */}
                 <div
                     className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]`}
                 >
@@ -44,6 +47,78 @@ const CollegeDashboard: React.FC = () => {
 
                     {/* Card Body */}
                     <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mb-2">
+                            {/* 1. Total students applied */}
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                                <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+                                    <FaUsers className="text-gray-800 size-6 dark:text-white/90" />
+                                </div>
+                                <div className="mt-5">
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        Total students applied for job
+                                    </span><br />
+                                    <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                                        30
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* 2. Selected & Rejected */}
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30">
+                                        <FaCheckCircle className="text-green-600 size-6 dark:text-green-400" />
+                                    </div>
+                                    <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-red-900/30">
+                                        <GoXCircle className="text-red-600 size-6 dark:text-red-400" />
+                                    </div>
+                                </div>
+                                <div className="mt-5">
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        Selection status
+                                    </span>
+                                    <div className="mt-2 space-y-1">
+                                        <span className="font-bold text-green-600  dark:text-green-400">
+                                            30 Selected
+                                        </span><br />
+                                        <span className="font-bold text-red-600  dark:text-red-400">
+                                            30 Rejected
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            {/* 3. Upcoming Interviews */}
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                                <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl dark:bg-blue-900/30">
+                                    <FaCalendarCheck className="text-blue-600 size-6 dark:text-blue-400" />
+                                </div>
+                                <div className="mt-5">
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        Upcoming interviews scheduled
+                                    </span><br />
+                                    <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                                        5 Students
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* 4. Job Vacancies */}
+                            <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                                <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-xl dark:bg-purple-900/30">
+                                    <FaBriefcase className="text-purple-600 size-6 dark:text-purple-400" />
+                                </div>
+                                <div className="mt-5">
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        Total job vacancies open
+                                    </span><br />
+                                    <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                                        5
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                         <div className="space-y-6">
                             {/* TABLE — visible on md and above */}
                             <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">

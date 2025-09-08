@@ -17,13 +17,14 @@ import FormElements from "./pages/Forms/FormElements";
 import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-// import Home from "./pages/Dashboard/Home";
+import Home from "./pages/Dashboard/Home";
 import JobDashboard from "./pages/Dashboard/JobDashboard";
 import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
 import PrivateLayout from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
+import RegistrationForm from "./pages/Forms/RegistrationForm";
 import { useAppSelector } from "./app/store";
 
 const ROLE_HOME: Record<string, string> = {
@@ -57,7 +58,7 @@ export default function App() {
           <Route element={<PrivateLayout />}>
 
             <Route element={<AppLayout />}>
-              {/* <Route index path="/" element={<Home />} /> */}
+              <Route index path="/home" element={<Home />} />
               <Route element={<RequireRole role='Company' />}>
 
                 <Route path="/" element={<JobDashboard />} />
@@ -107,6 +108,8 @@ export default function App() {
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
+          {/* Registration Form */}
+          <Route path="/registration-form" element={<RegistrationForm />} />
         </Routes>
       </Router>
     </>

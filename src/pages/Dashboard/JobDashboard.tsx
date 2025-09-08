@@ -111,6 +111,80 @@ const tableData = [
 //     { value: "hybrid", label: "Hybrid" },
 // ];
 
+
+type Job = {
+    id: number;
+    title: string;
+    experience: string;
+    skills: string[];
+    responsibilities: string[];
+    qualifications: string[];
+    perks: string[];
+    location: string;
+    salary: string;
+};
+
+const jobs: Job[] = [
+    {
+        id: 0,
+        title: "Frontend Developer",
+        experience: "2–4 years",
+        skills: ["React.js", "TypeScript", "Tailwind CSS", "Redux"],
+        responsibilities: [
+            "Build and maintain user-friendly web applications",
+            "Work closely with design team to implement UI/UX",
+            "Write clean and maintainable code",
+            "Participate in code reviews and agile ceremonies",
+        ],
+        qualifications: [
+            "Bachelor’s degree in Computer Science or related field",
+            "Strong understanding of React and modern JavaScript",
+        ],
+        perks: ["Health Insurance", "Flexible Working Hours", "Team Outings"],
+        location: "Hyderabad",
+        salary: "₹8–12 LPA",
+    },
+    {
+        id: 1,
+        title: "Frontend Developer",
+        experience: "2–4 years",
+        skills: ["React.js", "TypeScript", "Tailwind CSS", "Redux"],
+        responsibilities: [
+            "Build and maintain user-friendly web applications",
+            "Work closely with design team to implement UI/UX",
+            "Write clean and maintainable code",
+            "Participate in code reviews and agile ceremonies",
+        ],
+        qualifications: [
+            "Bachelor’s degree in Computer Science or related field",
+            "Strong understanding of React and modern JavaScript",
+        ],
+        perks: ["Health Insurance", "Flexible Working Hours", "Team Outings"],
+        location: "Hyderabad",
+        salary: "₹8–12 LPA",
+    },
+    {
+        id: 2,
+        title: "Backend Developer",
+        experience: "3–5 years",
+        skills: ["Node.js", "Express", "MongoDB", "REST APIs"],
+        responsibilities: [
+            "Design and implement scalable backend services",
+            "Develop secure REST APIs and integrations",
+            "Optimize database queries and performance",
+            "Collaborate with frontend team for end-to-end features",
+        ],
+        qualifications: [
+            "Bachelor’s in Computer Science or equivalent",
+            "Experience with Node.js and cloud deployments",
+        ],
+        perks: ["Work From Home Options", "Learning Budget", "Performance Bonus"],
+        location: "Bengaluru",
+        salary: "₹10–15 LPA",
+    },
+];
+
+
 const JobDashboard: React.FC = () => {
     const navigate = useNavigate();
     const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
@@ -128,6 +202,19 @@ const JobDashboard: React.FC = () => {
     ])
 
     const [rows, setRows] = useState(tableData);
+    const [openModalId, setOpenModalId] = useState<number | null>(null);
+    const selected = openModalId !== null ? jobs.find((j) => j.id === openModalId) : null;
+
+
+    const toggleDescModal = (id: number) => {
+        setOpenModalId(id); // store the selected id/index
+    };
+
+    const closeModal = () => {
+        setOpenModalId(null); // close modal
+    };
+
+
 
 
     // Update a specific row's status
@@ -178,6 +265,7 @@ const JobDashboard: React.FC = () => {
     const handleRemoveInterviewMode = (index: any) => {
         setInterviewStructure((prev) => prev.filter((_, i) => i !== index));
     }
+
 
     return (
         <>
@@ -315,11 +403,12 @@ const JobDashboard: React.FC = () => {
                                                             </TableCell>
                                                             <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                                 <button
-                                                                    // type="button"
-
+                                                                    type="button"
+                                                                    onClick={() => toggleDescModal(idx)}
                                                                     className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
                                                                 >
-                                                                    {order.desc}
+                                                                    {/* {order.desc} */}
+                                                                    {'Description'}
                                                                 </button>
                                                             </TableCell>
                                                             {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
@@ -553,7 +642,8 @@ const JobDashboard: React.FC = () => {
                                                 // onClick={() => toggleStatusMenu(index)}
                                                 className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
                                             >
-                                                {item.desc}
+                                                {'Description'}
+                                                {/* {item.desc} */}
                                             </button>
                                         </div>
                                     </div>
@@ -611,6 +701,7 @@ const JobDashboard: React.FC = () => {
                                 <Select
                                     options={role}
                                     placeholder="Select an option"
+
 
                                 />
                             </div>
@@ -796,6 +887,82 @@ const JobDashboard: React.FC = () => {
                         </div>
                     </div>
                 </div>
+            </Modal>
+            {/* Description Modal */}
+            <Modal isOpen={openModalId !== null} onClose={closeModal} className="max-w-2xl">
+                {selected ? (
+                    <div className="relative w-full bg-white rounded-3xl dark:bg-gray-900 flex flex-col">
+                        {/* Header */}
+                        <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+                            <h4 className="mb-1 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                                Job Description — #{selected.id} · {selected.title}
+                            </h4>
+                        </div>
+
+                        {/* JD Content */}
+                        <div className="px-6 py-5 space-y-6 overflow-y-auto max-h-[75vh]">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div>
+                                    <p className="text-sm text-gray-500">Experience</p>
+                                    <p className="font-medium">{selected.experience}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Location</p>
+                                    <p className="font-medium">{selected.location}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Salary</p>
+                                    <p className="font-medium">{selected.salary}</p>
+                                </div>
+                            </div>
+
+                            <section>
+                                <h5 className="mb-2 text-lg font-semibold">Skills</h5>
+                                <ul className="flex flex-wrap gap-2">
+                                    {selected.skills.map((s, i) => (
+                                        <li
+                                            key={i}
+                                            className="px-2.5 py-1 rounded-full border text-xs font-medium text-gray-700"
+                                        >
+                                            {s}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+
+                            <section>
+                                <h5 className="mb-2 text-lg font-semibold">Roles & Responsibilities</h5>
+                                <ul className="list-disc pl-6 space-y-2">
+                                    {selected.responsibilities.map((r, i) => (
+                                        <li key={i}>{r}</li>
+                                    ))}
+                                </ul>
+                            </section>
+
+                            <section>
+                                <h5 className="mb-2 text-lg font-semibold">Qualifications</h5>
+                                <ul className="list-disc pl-6 space-y-2">
+                                    {selected.qualifications.map((q, i) => (
+                                        <li key={i}>{q}</li>
+                                    ))}
+                                </ul>
+                            </section>
+
+                            <section>
+                                <h5 className="mb-2 text-lg font-semibold">Perks & Benefits</h5>
+                                <ul className="list-disc pl-6 space-y-2">
+                                    {selected.perks.map((p, i) => (
+                                        <li key={i}>{p}</li>
+                                    ))}
+                                </ul>
+                            </section>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="p-6 text-center text-gray-600 dark:text-gray-300">
+                        No job description available
+                    </div>
+                )}
             </Modal>
 
         </>

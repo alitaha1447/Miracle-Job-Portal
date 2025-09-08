@@ -50,10 +50,10 @@ type Comment = {
 
 
 const DEFAULT_COUNTRIES = [
-    { label: "Miracle", value: "1" },
-    { label: "Google", value: "2" },
-    { label: "Meta", value: "3" },
-    { label: "Amazon", value: "4" },
+    { label: "Company Name", value: "1" },
+    { label: "Job Type", value: "2" },
+    { label: "Skill", value: "3" },
+    { label: "Job Title", value: "4" },
 ];
 
 const JobsFilter: React.FC<JobsFilterProps> = ({
