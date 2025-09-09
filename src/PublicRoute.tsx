@@ -3,10 +3,10 @@ import { Navigate, Outlet } from 'react-router'
 import { useAppSelector } from './app/store'
 
 const PublicRoute: React.FC = () => {
-    console.log('PublicRoute rendered');
+    // console.log('PublicRoute rendered');
     const { user } = useAppSelector((state) => state.auth);
 
-    console.log(user)
+    // console.log(user)
     // If NOT logged in → allow access to login/register pages
     if (!user) {
         return <Outlet />;

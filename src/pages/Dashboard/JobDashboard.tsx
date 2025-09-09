@@ -21,7 +21,9 @@ import Input from "../../components/form/input/InputField";
 import Label from "../../components/form/Label";
 // import Select from '../../components/form/Select';
 import ReactQuill from 'react-quill';
-import Select from "react-select";
+// import Select from "react-select";
+import CreatableSelect from 'react-select/creatable';
+
 // import { Dropdown } from '../../components/ui/dropdown/Dropdown';
 
 // interface Item {
@@ -222,7 +224,7 @@ const JobDashboard: React.FC = () => {
         setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, status: newStatus } : r)));
     };
 
-
+    // console.log(rows)
 
 
     const toggleRowMenu = (idx: number) =>
@@ -698,22 +700,24 @@ const JobDashboard: React.FC = () => {
                         <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                             <div>
                                 <Label>Role</Label>
-                                <Select
+                                {/* <Select
                                     options={role}
                                     placeholder="Select an option"
 
 
-                                />
+                                /> */}
+                                <CreatableSelect isClearable options={role} />
                             </div>
 
                             <div>
                                 <Label>Skills</Label>
-                                <Select
+                                {/* <Select
                                     isMulti
                                     options={skills}
                                     placeholder="Select an skills"
 
-                                />
+                                /> */}
+                                <CreatableSelect isMulti isClearable options={skills} />
                             </div>
 
                             <div className='lg:col-span-2'>
@@ -723,10 +727,12 @@ const JobDashboard: React.FC = () => {
 
                             <div>
                                 <Label>Preferred Organization</Label>
-                                <Select
+                                {/* <Select
                                     options={preferredOrganization}
                                     placeholder="Select an option"
-                                />
+                                /> */}
+                                <CreatableSelect isClearable options={preferredOrganization} />
+
                             </div>
 
                             <div>
@@ -750,19 +756,23 @@ const JobDashboard: React.FC = () => {
 
                             <div>
                                 <Label>Interview Mode</Label>
-                                <Select
+                                {/* <Select
                                     options={mode}
                                     placeholder="Select an option"
 
-                                />
+                                /> */}
+                                <CreatableSelect isClearable options={mode} />
+
                             </div>
                             <div>
                                 <Label>Job Mode</Label>
-                                <Select
+                                {/* <Select
                                     options={jobMode}
                                     placeholder="Select an option"
 
-                                />
+                                /> */}
+                                <CreatableSelect isClearable options={jobMode} />
+
                             </div>
 
 
@@ -797,11 +807,12 @@ const JobDashboard: React.FC = () => {
                                         >
 
                                             <div className="min-w-0 basis-[260px]">
-                                                <Select
+                                                {/* <creata
                                                     options={skills}
                                                     placeholder="Select an option"
 
-                                                />
+                                                /> */}
+                                                <CreatableSelect isClearable options={skills} />
                                             </div>
 
                                             <div className="shrink basis-[140px] min-w-[96px]">

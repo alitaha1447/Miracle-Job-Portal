@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import Label from '../../components/form/Label';
 import RadioGroupField from '../../components/formFields/RadioGroup';
 import { FaPlus, FaMinus } from "react-icons/fa";
+import CreatableSelect from 'react-select/creatable';
+import DatePicker from "react-datepicker";
 
 type EduDetail = {
   id: string;
@@ -66,6 +68,8 @@ const RegistrationForm: React.FC = () => {
       file: null,
     }
   ])
+  const [date, setDate] = useState<Date | null>(null);
+
 
 
   // 🔑 Common change handler (edit by index)
@@ -187,12 +191,14 @@ const RegistrationForm: React.FC = () => {
             </div>
             {/*  */}
             <div className="flex flex-col">
-              <Label>Father's Accupation</Label>
-              <input
+              <Label>Father's Occupation</Label>
+              <CreatableSelect isClearable placeholder='Select father Occupation' />
+
+              {/* <input
                 type="text"
                 className="bg-transparent text-gray-800 rounded-lg border border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800"
                 placeholder="Enter your father accupation"
-              />
+              /> */}
             </div>
             {/* Name */}
             <div className="flex flex-col">
@@ -229,10 +235,13 @@ const RegistrationForm: React.FC = () => {
             {/* Name */}
             <div className="flex flex-col">
               <Label>Date of birth</Label>
-              <input
-                type="text"
-                className="bg-transparent text-gray-800 rounded-lg border border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:text-white/90  dark:focus:border-brand-800"
-                placeholder="Enter your dob"
+              <DatePicker
+                selected={date}
+                onChange={(d) => setDate(d)}
+                placeholderText="Select date"
+                dateFormat="dd-MM-yyyy"
+                isClearable
+                className="w-full rounded-md border border-gray-300 px-3 py-2"
               />
             </div>
             {/* Name */}
@@ -258,16 +267,32 @@ const RegistrationForm: React.FC = () => {
               <label className="mb-2 font-medium text-gray-700">Educational Details</label>
 
               {eduDetails.map((row, idx) => (
-                <div key={row.id} className="flex items-center gap-2 mb-3">
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-2 w-full">
-                    <input
+                <div key={row.id} className="mb-3">
+                  <div className='relative'>
+
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-2 w-full pr-16">
+                      {/* <input
                       type="text"
                       value={row.qualification}
                       onChange={(e) => handleEduChange(idx, "qualification", e.target.value)} className="border rounded-lg p-2"
                       placeholder="Enter Qualification (e.g., B.Tech, MBA)"
-                    />
+                    /> */}
+                      <div className="min-w-0">
 
-                    <input
+                        <CreatableSelect isClearable placeholder='Qualification' />
+                      </div>
+                      <div className="min-w-0">
+
+                        <CreatableSelect isClearable placeholder='Institution' />
+                      </div>
+                      <div className="min-w-0">
+
+                        <CreatableSelect isClearable placeholder='University' />
+
+                      </div>
+
+
+                      {/* <input
                       type="text"
                       value={row.institution}
                       onChange={(e) => handleEduChange(idx, "institution", e.target.value)}
@@ -281,52 +306,55 @@ const RegistrationForm: React.FC = () => {
                       onChange={(e) => handleEduChange(idx, "university", e.target.value)}
                       className="border rounded-lg p-2"
                       placeholder="Enter University / Board"
-                    />
+                    /> */}
 
-                    <input
-                      type="number"
-                      value={row.year}
-                      onChange={(e) => handleEduChange(idx, "year", e.target.value)}
-                      className="border rounded-lg p-2"
-                      placeholder="Year of Passing"
-                    />
+                      <input
+                        type="number"
+                        value={row.year}
+                        onChange={(e) => handleEduChange(idx, "year", e.target.value)}
+                        className="border rounded-lg p-2 h-10 w-full"
+                        placeholder="Year of Passing"
+                      />
 
-                    <input
-                      type="text"
-                      value={row.grade}
-                      onChange={(e) => handleEduChange(idx, "grade", e.target.value)}
-                      className="border rounded-lg p-2"
-                      placeholder="Percentage / Grade"
-                    />
+                      <input
+                        type="text"
+                        value={row.grade}
+                        onChange={(e) => handleEduChange(idx, "grade", e.target.value)}
+                        className="border rounded-lg p-2 h-10 w-full"
+                        placeholder="Percentage / Grade"
+                      />
 
-                    <input
-                      type="file"
-                      onChange={(e) => handleEduChange(idx, "institution", e.target.value)}
-                      className="block text-sm border rounded-lg cursor-pointer p-2 md:col-span-1"
-                    />
+                      <input
+                        type="file"
+                        // onChange={(e) => handleEduChange(idx, "institution", e.target.value)}
+                        className="block text-sm border rounded-lg cursor-pointer p-2 h-10 w-full"
+                      />
+                    </div>
+                    <div className='absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 w-16 justify-end'>
+
+                      {/* Add button (only on last row) */}
+                      {idx === eduDetails.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={handleAdd}
+                          className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
+                        >
+                          <FaPlus size={12} />
+                        </button>
+                      )}
+
+                      {/* Delete button (enabled when more than 1 row) */}
+                      {eduDetails.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(idx)}
+                          className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
+                        >
+                          <FaMinus size={12} />
+                        </button>
+                      )}
+                    </div>
                   </div>
-
-                  {/* Add button (only on last row) */}
-                  {idx === eduDetails.length - 1 && (
-                    <button
-                      type="button"
-                      onClick={handleAdd}
-                      className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  )}
-
-                  {/* Delete button (enabled when more than 1 row) */}
-                  {eduDetails.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(idx)}
-                      className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                  )}
                 </div>
               ))}
             </div>
@@ -336,53 +364,66 @@ const RegistrationForm: React.FC = () => {
               <label className="mb-2 font-medium text-gray-700">Certifications</label>
 
               {certificationDetails.map((row, idx) => (
-                <div key={row.id} className="flex items-center gap-2 mb-3">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 w-full">
-                    <input
+                <div key={row.id} className="mb-3">
+                  <div className="relative">
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-2 w-full pr-16">
+                      {/* <input
                       type="text"
                       value={row.name}
                       onChange={(e) => handleCertChange(idx, 'name', e.target.value)}
                       // onChange={(e) => handleEduChange(idx, "institution", e.target.value)}
                       className="border rounded-lg p-2"
                       placeholder="Enter Certification Name"
-                    />
+                    /> */}
+                      <div className='className="min-w-0"'>
 
-                    <input
-                      type="number"
-                      value={row.complletionYear}
-                      onChange={(e) => handleCertChange(idx, 'complletionYear', e.target.value)}
-                      className="border rounded-lg p-2"
-                      placeholder="Year of Completion"
-                    />
+                        <CreatableSelect isClearable placeholder='Certification Name' />
+                      </div>
 
-                    <input
-                      type="file"
-                      onChange={(e) => handleFileChange(idx, e.target.files?.[0] ?? null)}
-                      className="block text-sm border rounded-lg cursor-pointer p-2"
-                    />
+
+                      <input
+                        type="number"
+                        value={row.complletionYear}
+                        onChange={(e) => handleCertChange(idx, 'complletionYear', e.target.value)}
+                        className="border rounded-lg p-2 h-10 w-full"
+                        placeholder="Year of Completion"
+                      />
+
+                      <input
+                        type="file"
+                        onChange={(e) => handleFileChange(idx, e.target.files?.[0] ?? null)}
+                        className="block text-sm border rounded-lg cursor-pointer p-2 h-10 w-full"
+                      />
+                    </div>
+
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 w-16 justify-end">
+                      {/* Add button (only on last row) */}
+                      {idx === certificationDetails.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={hamdleAddCertificate}
+                          className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
+                        >
+                          <FaPlus size={12} />
+                        </button>
+                      )}
+
+                      {/* Delete button (optional for each row) */}
+                      {certificationDetails.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteCertificate(idx)}
+                          className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
+                        >
+                          <FaMinus size={12} />
+                        </button>
+                      )}
+                    </div>
+
                   </div>
 
-                  {/* Add button (only on last row) */}
-                  {idx === certificationDetails.length - 1 && (
-                    <button
-                      type="button"
-                      onClick={hamdleAddCertificate}
-                      className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  )}
 
-                  {/* Delete button (optional for each row) */}
-                  {certificationDetails.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteCertificate(idx)}
-                      className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                  )}
 
                 </div>
               ))}
@@ -390,9 +431,21 @@ const RegistrationForm: React.FC = () => {
 
             {/* Experiences Details */}
             <div className="flex flex-col md:col-span-3">
+              <div className="flex items-center gap-5 mb-2">
 
+                <div className="flex items-center gap-2">
+                  <label className="mb-2 font-medium text-gray-700">Experiences Details</label>
+                  <button
+                    type="button"
+                    onClick={hamdleAddExperience}
+                    className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
+                  >
+                    <FaPlus size={12} />
+                  </button>
+                </div>
+              </div>
 
-              <label className="mb-2 font-medium text-gray-700">Experiences Details</label>
+              {/* <label className="mb-2 font-medium text-gray-700">Experiences Details</label> */}
 
 
               {/* <div className="grid grid-cols-1 lg:grid-cols-4 font-medium text-gray-600 mb-1">
@@ -402,9 +455,10 @@ const RegistrationForm: React.FC = () => {
                 <label>Upload Certificate</label>
               </div> */}
               {expDetails.map((row, idx) => (
-                <div key={row.id} className="flex items-center gap-2 mb-3">
-                  <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 w-full">
-                    <input
+                <div key={row.id} className="gap-2 mb-3">
+                  <div className="relative">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-2 w-full pr-16">
+                      {/* <input
                       type="text"
                       value={row.organization}
                       onChange={(e) => handleExpChange(idx, 'organization', e.target.value)}
@@ -417,45 +471,53 @@ const RegistrationForm: React.FC = () => {
                       onChange={(e) => handleExpChange(idx, 'role', e.target.value)}
                       className="border rounded-lg p-2"
                       placeholder="Enter Role"
-                    />
+                    /> */}
+                      <div className="min-w-0">  <CreatableSelect isClearable placeholder='Select Organization Name' /></div>
+                      <div className="min-w-0"> <CreatableSelect isClearable placeholder='Select Role' /></div>
 
-                    <input
-                      type="number"
-                      value={row.totalExp}
-                      onChange={(e) => handleExpChange(idx, "totalExp", e.target.value)}
-                      className="border rounded-lg p-2"
-                      placeholder="Total Year of Experience"
-                    />
 
-                    <input
-                      type="file"
 
-                      // onChange={(e) => handleFileChange(row.id, e.target.files?.[0] ?? null)}
-                      className="block text-sm border rounded-lg cursor-pointer p-2"
-                    />
+
+                      <input
+                        type="number"
+                        value={row.totalExp}
+                        onChange={(e) => handleExpChange(idx, "totalExp", e.target.value)}
+                        className="border rounded-lg p-2 h-10 w-full" placeholder="Total Year of Experience"
+                      />
+
+                      <input
+                        type="file"
+
+                        // onChange={(e) => handleFileChange(row.id, e.target.files?.[0] ?? null)}
+                        className="block text-sm border rounded-lg cursor-pointer p-2 h-10 w-full"
+                      />
+                    </div>
+                    <div className='absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 w-16 justify-end'>
+                      {/* Add button (only on last row) */}
+                      {/* {idx === expDetails.length - 1 && (
+                        <button
+                          type="button"
+                          onClick={hamdleAddExperience}
+                          className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
+                        >
+                          <FaPlus size={12} />
+                        </button>
+                      )} */}
+
+                      {/* Delete button (optional for each row) */}
+                      {expDetails.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteExperience(idx)}
+                          className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
+                        >
+                          <FaMinus size={12} />
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Add button (only on last row) */}
-                  {idx === expDetails.length - 1 && (
-                    <button
-                      type="button"
-                      onClick={hamdleAddExperience}
-                      className="w-7 h-7 rounded-full bg-indigo-600 text-white flex items-center justify-center"
-                    >
-                      <FaPlus size={12} />
-                    </button>
-                  )}
 
-                  {/* Delete button (optional for each row) */}
-                  {expDetails.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteExperience(idx)}
-                      className="w-7 h-7 rounded-full bg-red-600 text-white flex items-center justify-center"
-                    >
-                      <FaMinus size={12} />
-                    </button>
-                  )}
                 </div>
               ))}
             </div>

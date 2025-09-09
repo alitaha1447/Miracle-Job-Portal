@@ -22,6 +22,7 @@ import JobDashboard from "./pages/Dashboard/JobDashboard";
 import ParticipantDashboard from "./pages/Dashboard/ParticipantDashboard";
 import StudentDashboard from "./pages/Dashboard/StudentDashboard";
 import CollegeDashboard from "./pages/Dashboard/CollegeDashboard";
+import VerificationDashboard from "./pages/Dashboard/VerificationDashboard";
 import PrivateLayout from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import RegistrationForm from "./pages/Forms/RegistrationForm";
@@ -60,7 +61,6 @@ export default function App() {
             <Route element={<AppLayout />}>
               <Route index path="/home" element={<Home />} />
               <Route element={<RequireRole role='Company' />}>
-
                 <Route path="/" element={<JobDashboard />} />
               </Route>
               {/* STUDENT-ONLY ROUTES */}
@@ -72,6 +72,7 @@ export default function App() {
               <Route element={<RequireRole role="College" />}>
                 <Route path="/college-dashboard" element={<CollegeDashboard />} />
               </Route>
+              <Route path="/verification-dashboard" element={<VerificationDashboard />} />
               {/* <Route path="/student-dashboard" element={<StudentDashboard />} /> */}
               {/* <Route path="/college-dashboard" element={<CollegeDashboard />} /> */}
 

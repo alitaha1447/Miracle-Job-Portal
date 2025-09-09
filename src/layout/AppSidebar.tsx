@@ -39,6 +39,16 @@ const navItems: NavItem[] = [
     ],
   },
   {
+    icon: <GridIcon />,
+    name: "Verification Dashboard",
+    path: "/verification-dashboard",
+  },
+  {
+    icon: <ListIcon />,
+    name: "Registration Form",
+    path: "/registration-form",
+  },
+  {
     icon: <CalenderIcon />,
     name: "Calendar",
     path: "/calendar",
