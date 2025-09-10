@@ -26,6 +26,9 @@ import VerificationDashboard from "./pages/Dashboard/VerificationDashboard";
 import PrivateLayout from "./PrivateRoute";
 import PublicRoute from "./PublicRoute";
 import RegistrationForm from "./pages/Forms/RegistrationForm";
+import CollegeRegistrationForm from "./pages/Forms/CollegeRegistrationForm";
+import CompanyRegistrationForm from "./pages/Forms/CompanyRegistrationForm";
+
 import { useAppSelector } from "./app/store";
 
 const ROLE_HOME: Record<string, string> = {
@@ -83,6 +86,10 @@ export default function App() {
 
               {/* Forms */}
               <Route path="/form-elements" element={<FormElements />} />
+              <Route path="/registration-form" element={<RegistrationForm />} />
+
+              <Route path="/college-form" element={<CollegeRegistrationForm />} />
+              <Route path="/company-form" element={<CompanyRegistrationForm />} />
 
               {/* Tables */}
               <Route path="/basic-tables" element={<BasicTables />} />
@@ -110,7 +117,9 @@ export default function App() {
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
           {/* Registration Form */}
-          <Route path="/registration-form" element={<RegistrationForm />} />
+          <Route path="/outside-registration-form" element={<RegistrationForm />} />
+          <Route path="/outside-college-form" element={<CollegeRegistrationForm />} />
+          <Route path="/outside-company-form" element={<CompanyRegistrationForm />} />
         </Routes>
       </Router>
     </>

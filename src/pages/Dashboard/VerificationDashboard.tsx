@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHeader,
-    TableRow,
-} from "../../components/ui/table";
-import Select, { SingleValue } from "react-select";
+import React, { useState, lazy, Suspense } from 'react'
+
+import { SingleValue } from "react-select";
+import { FaUsers } from "react-icons/fa";
+
+import { GoXCircle } from "react-icons/go";
+import { FaBriefcase } from "react-icons/fa";
+import { PiStudentBold } from "react-icons/pi";
+import { FaUniversity } from "react-icons/fa";
+
+// Lazy-loaded
+const Student = lazy(() => import("../../components/verificationTable/Student"));
+const Company = lazy(() => import("../../components/verificationTable/Company"));
+const College = lazy(() => import("../../components/verificationTable/College"));
+
+type UserType = "Student" | "Company" | "College";
 
 type Row = {
     id: number;
@@ -16,53 +23,127 @@ type Row = {
     status: string; // stores the LABEL text
 };
 
-const initialRows: Row[] = [
-    { id: 0, name: "Prince Jain", mobile: "9981341559", email: "p@gmail.com", status: "Pending for verification" },
-    { id: 1, name: "Kuldeep Mishra", mobile: "9981341559", email: "p@gmail.com", status: "Verified" },
-    { id: 2, name: "Joney", mobile: "9981341559", email: "p@gmail.com", status: "Verification failed" },
-    { id: 3, name: "Jatin", mobile: "9981341559", email: "p@gmail.com", status: "Verification in Progress" },
-];
-
-const STATUS_OPTIONS = [
-    { value: "0", label: "Pending for verification" },
-    { value: "1", label: "Verified" },
-    { value: "2", label: "Verification failed" }, // fixed typo
-    { value: "3", label: "Verification in Progress" },
-];
-
 type StatusOption = { value: string; label: string };
 
+// initial data per type
+const initialData: Record<UserType, Row[]> = {
+    Student: [
+        { id: 0, name: "Prince Jain", mobile: "9981341559", email: "p@gmail.com", status: "Pending for verification" },
+        { id: 1, name: "Kuldeep Mishra", mobile: "9981341559", email: "p@gmail.com", status: "Verified" },
+        { id: 2, name: "Joney", mobile: "9981341559", email: "p@gmail.com", status: "Verification failed" },
+        { id: 3, name: "Jatin", mobile: "9981341559", email: "p@gmail.com", status: "Verification in Progress" },
+    ],
+    Company: [
+        { id: 100, name: "Acme Pvt Ltd", mobile: "022-555000", email: "hr@acme.com", status: "Pending for verification" },
+    ],
+    College: [
+        { id: 200, name: "BNIT", mobile: "0755-220011", email: "admin@bnit.edu", status: "Verified" },
+    ],
+};
 
 
 const VerificationDashboard: React.FC = () => {
 
+    const [userType, setUserType] = useState<UserType>("Student");
+    const [data, setData] = useState<Record<UserType, Row[]>>(initialData);
+    const [selectedStatus, setSelectedStatus] = useState<Row | null>(null);
 
-    const [rows, setRows] = useState<Row[]>(initialRows);
-    // const [selectedStatus, setselectedStatus] = useState<StatusOption | null>(null);
-
-
+    const rows = data[userType];
 
     const handleStatusChange = (index: number, selected: SingleValue<StatusOption>) => {
-
         if (!selected) return;
 
-        setRows(prev =>
-            prev.map((r, i) => (i === index ? { ...r, status: selected.label } : r))
-        );
-        // setselectedStatus(selected)
+        setData(prev => {
+            const list = prev[userType];
+            const updatedList = list.map((r, i) => (i === index ? { ...r, status: selected.label } : r));
+            // store only the changed row
+            setSelectedStatus(updatedList[index]);
+            return { ...prev, [userType]: updatedList };
+        });
     };
+    console.log(selectedStatus)
+
 
     return (
         <div>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-2'>
+                <div
+                    // onClick={toggleTotalStudent}
+                    className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                    <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+                        <FaUsers className="text-gray-800 size-6 dark:text-white/90" />
+                    </div>
+                    <div className="mt-5">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                            Total registration
+                        </span><br />
+                        <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                            30
+                        </span>
+                    </div>
+                </div>
+
+                {/* 2. Selected & Rejected */}
+                <div
+                    //  onClick={toggleSelectionStatus} 
+                    className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                    <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30">
+                            <PiStudentBold className="text-green-600 size-6 dark:text-green-400" />
+                        </div>
+                        <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl dark:bg-blue-900/30">
+                            <FaUniversity className="text-blue-600 size-6 dark:text-blue-400" />
+                        </div>
+                        <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-xl dark:bg-orange-900/30">
+                            <FaBriefcase className="text-orange-600 size-6 dark:text-orange-400" />
+                        </div>
+                    </div>
+                    <div className="mt-5">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                            Pending verification
+                        </span>
+                        <div className="flex gap-2 mt-2">
+                            <span className="font-bold text-green-600  dark:text-green-400">
+                                30 Student
+                            </span>
+                            <span className="font-bold text-blue-600  dark:text-blue-400">
+                                30 College
+                            </span>
+                            <span className="font-bold text-orange-600  dark:text-orange-400">
+                                30 Company
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* 3. Upcoming Interviews */}
+                <div
+
+                    // onClick={toggleInterviewList} 
+                    className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                    <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-red-900/30">
+                        <GoXCircle className="text-red-600 size-6 dark:text-red-400" />
+                    </div>
+                    <div className="mt-5">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                            Rejected
+                        </span><br />
+                        <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                            5
+                        </span>
+                    </div>
+                </div>
+            </div>
 
             <div className="space-y-6">
                 <div
                     className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]`}
                 >
                     {/* Card Header */}
-                    <div className="px-6 py-5 flex items-center justify-between">
+                    <div className="px-6 py-5 flex flex-col gap-5">
                         <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
-                            Jobs List
+                            Verification Dashboard
                         </h3>
                         {/* <button
                             onClick={togglePostJob}
@@ -70,320 +151,35 @@ const VerificationDashboard: React.FC = () => {
                         >
                             Add New Job
                         </button> */}
-
-                    </div>
-
-                    {/* Card Body */}
-                    <div className="hidden lg:block p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-                        <div className="space-y-6">
-                            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                                <div className="max-w-full overflow-x-auto">
-                                    <div className="min-w-[1102px]">
-                                        <Table>
-                                            {/* Table Header */}
-                                            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                                                <TableRow>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        S.No.
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        Name
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        Mobile No.
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        Email
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        View Eduacational Details
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        View Certifications
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        View Experience
-                                                    </TableCell>
-                                                    <TableCell
-                                                        isHeader
-                                                        className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                    >
-                                                        Status
-                                                    </TableCell>
-
-                                                </TableRow>
-                                            </TableHeader>
-
-                                            {/* Table Body */}
-                                            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                                {rows.map((row, idx) => (
-                                                    <TableRow key={idx}>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                            {row.id}
-
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-
-                                                            {row.name}
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                            {row.mobile}
-
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                            {row.email}
-
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                            <button type="button"
-                                                                className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                            >
-                                                                {'Educational Details'}
-                                                            </button>
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <button type="button"
-                                                                className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                            >
-                                                                {'Certifications'}
-                                                            </button>
-                                                        </TableCell>
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <button type="button"
-                                                                className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                            >
-                                                                {'Experiences'}
-                                                            </button>
-                                                        </TableCell>
-
-                                                        <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <div className="relative inline-flex">
-                                                                <Select
-                                                                    options={STATUS_OPTIONS}
-                                                                    value={STATUS_OPTIONS.find(o => o.label === row.status) || null}
-                                                                    onChange={(opt) => handleStatusChange(idx, opt)}
-                                                                    placeholder="Select status"
-                                                                    isSearchable={false}
-                                                                    menuPortalTarget={document.body}
-                                                                    menuPosition="fixed"
-                                                                    styles={{
-                                                                        // menuPortal: base => ({ ...base, zIndex: 9999 }),
-                                                                        control: base => ({
-                                                                            ...base,
-                                                                            minHeight: 28,   // smaller control
-                                                                            height: 28,
-                                                                            borderRadius: 9999,
-                                                                            fontSize: 12,
-                                                                            width: 180,
-                                                                        }),
-                                                                        // valueContainer: base => ({
-                                                                        //     ...base,
-                                                                        //     paddingTop: 0,
-                                                                        //     paddingBottom: 0,
-                                                                        //     paddingLeft: 8,
-                                                                        //     paddingRight: 8,
-                                                                        // }),
-                                                                        // indicatorsContainer: base => ({
-                                                                        //     ...base,
-                                                                        //     height: 28,
-                                                                        // }),
-                                                                        // menu: base => ({
-                                                                        //     ...base,
-                                                                        //     width: 180,
-                                                                        //     fontSize: 12,        // smaller text
-                                                                        //     borderRadius: 8,
-                                                                        //     marginTop: 2,
-                                                                        // }),
-                                                                        option: (base, state) => ({
-                                                                            ...base,
-                                                                            fontSize: 12,        // smaller font
-                                                                            padding: "4px 8px",  // tighter padding
-                                                                            cursor: "pointer",
-                                                                            backgroundColor: state.isSelected
-                                                                                ? "#2563eb"  // your theme blue
-                                                                                : state.isFocused
-                                                                                    ? "#e5e7eb"  // gray-200 on hover
-                                                                                    : "white",
-                                                                            color: state.isSelected ? "white" : "#374151", // dark text
-                                                                        }),
-                                                                        dropdownIndicator: base => ({
-                                                                            ...base,
-                                                                            padding: 2,
-                                                                        }),
-                                                                        clearIndicator: base => ({
-                                                                            ...base,
-                                                                            padding: 2,
-                                                                        }),
-                                                                    }}
-                                                                />
-
-                                                            </div>
-                                                        </TableCell>
-                                                    </TableRow>
-                                                ))}
-                                            </TableBody>
-                                        </Table>
-                                    </div>
-                                </div>
-                            </div>
+                        <div className="mb-0">
+                            {["Student", "Company", "College"].map((type) => (
+                                <label
+                                    key={type}
+                                    className="inline-flex items-center mr-6 cursor-pointer"
+                                >
+                                    <input
+                                        type="radio"
+                                        value={type}
+                                        checked={userType === type}
+                                        onChange={(e) => setUserType(e.target.value as UserType)}
+                                        className="mr-2 focus:outline-none focus:ring-0"
+                                    />
+                                    {type}
+                                </label>
+                            ))}
                         </div>
+
                     </div>
-                    {/*  */}
-                    {/* Mobile Card View */}
-                    <div className="lg:hidden overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                        {rows.map((row, index) => (
-                            <div
-                                key={index}
-                                className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] flex flex-col gap-3"
-                            >
-                                <div className="flex items-start justify-between gap-3">
-                                    <div className="flex items-center gap-3">
 
-                                        <div>
-                                            <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
-                                                {index + 1}. {row.id}
-                                            </h4>
-                                            <Select
-                                                options={STATUS_OPTIONS}
-                                                value={STATUS_OPTIONS.find(o => o.label === row.status) || null}
-                                                onChange={(opt) => handleStatusChange(index, opt)}
-                                                placeholder="Select status"
-                                                isSearchable={false}
-                                                menuPortalTarget={document.body}
-                                                menuPosition="fixed"
-                                                styles={{
-                                                    // menuPortal: base => ({ ...base, zIndex: 9999 }),
-                                                    control: base => ({
-                                                        ...base,
-                                                        minHeight: 28,   // smaller control
-                                                        height: 28,
-                                                        borderRadius: 9999,
-                                                        fontSize: 12,
-                                                        width: 180,
-                                                    }),
-                                                    // valueContainer: base => ({
-                                                    //     ...base,
-                                                    //     paddingTop: 0,
-                                                    //     paddingBottom: 0,
-                                                    //     paddingLeft: 8,
-                                                    //     paddingRight: 8,
-                                                    // }),
-                                                    // indicatorsContainer: base => ({
-                                                    //     ...base,
-                                                    //     height: 28,
-                                                    // }),
-                                                    // menu: base => ({
-                                                    //     ...base,
-                                                    //     width: 180,
-                                                    //     fontSize: 12,        // smaller text
-                                                    //     borderRadius: 8,
-                                                    //     marginTop: 2,
-                                                    // }),
-                                                    option: (base, state) => ({
-                                                        ...base,
-                                                        fontSize: 12,        // smaller font
-                                                        padding: "4px 8px",  // tighter padding
-                                                        cursor: "pointer",
-                                                        backgroundColor: state.isSelected
-                                                            ? "#2563eb"  // your theme blue
-                                                            : state.isFocused
-                                                                ? "#e5e7eb"  // gray-200 on hover
-                                                                : "white",
-                                                        color: state.isSelected ? "white" : "#374151", // dark text
-                                                    }),
-                                                    dropdownIndicator: base => ({
-                                                        ...base,
-                                                        padding: 2,
-                                                    }),
-                                                    clearIndicator: base => ({
-                                                        ...base,
-                                                        padding: 2,
-                                                    }),
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-                                <div className="grid grid-cols-1 gap-2 text-sm">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">Name</span>
-                                        <span className="font-medium text-gray-800 dark:text-white/90">{row.name}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">Email</span>
-                                        <span className="font-medium text-gray-800 dark:text-white/90">{row.email || "N/A"}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">Mobile No.</span>
-                                        <span className="font-medium text-gray-800 dark:text-white/90">₹{row.mobile}</span>
-                                    </div>
+                    {/* Table Body */}
+                    <Suspense fallback={<div className="p-6 text-sm text-gray-500">Loading {userType} table…</div>}>
+                        {userType === "Student" && <Student rows={rows} onStatusChange={handleStatusChange} />}
+                        {userType === "Company" && <Company rows={rows} onStatusChange={handleStatusChange} />}
+                        {userType === "College" && <College rows={rows} onStatusChange={handleStatusChange} />}
+                    </Suspense>
 
 
 
-
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">View Eduacational Details</span>
-                                        <button
-                                            type="button"
-                                            // onClick={() => toggleStatusMenu(index)}
-                                            className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                        >
-                                            {'Eduacational Details'}
-
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">View Certifications</span>
-                                        <button
-                                            type="button"
-                                            // onClick={() => toggleStatusMenu(index)}
-                                            className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                        >
-                                            {'Certifications'}
-
-                                        </button>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-gray-500">View Experience</span>
-                                        <button
-                                            type="button"
-                                            // onClick={() => toggleStatusMenu(index)}
-                                            className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                        >
-                                            {'View Experience'}
-
-                                        </button>
-                                    </div>
-                                </div>
-
-
-                            </div>
-                        ))}
-                    </div>
                 </div>
 
 
