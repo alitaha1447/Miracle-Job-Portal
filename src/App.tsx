@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -39,6 +39,8 @@ const ROLE_HOME: Record<string, string> = {
 
 function RequireRole({ role }: { role: string }) {
   const { user } = useAppSelector((s) => s.auth);
+  const location = useLocation(); // 👈 add this
+
   // not logged in → send to signin
   if (!user) {
     return <Navigate to="/signin" replace state={{ from: location }} />;

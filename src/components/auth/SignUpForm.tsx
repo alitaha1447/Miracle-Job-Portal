@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 
-
 export default function SignUpForm() {
+  const navigate = useNavigate()
+
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [userType, setUserType] = useState("Student");
+
+  const handleSignUp = () => {
+    if (userType === "Student") navigate("/outside-registration-form");
+    else if (userType === "College") navigate("/outside-college-form");
+    else if (userType === "Company") navigate("/outside-company-form");
+  };
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
@@ -18,7 +26,7 @@ export default function SignUpForm() {
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
           <ChevronLeftIcon className="size-5" />
-          Back to dashboard
+          Back to  Sign In
         </Link>
       </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -31,8 +39,25 @@ export default function SignUpForm() {
               Enter your email and password to sign up!
             </p>
           </div>
+          <div className="mb-5">
+            {["Student", "Company", "College"].map((type) => (
+              <label
+                key={type}
+                className="inline-flex items-center mr-6 cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  value={type}
+                  checked={userType === type}
+                  onChange={(e) => setUserType(e.target.value)}
+                  className="mr-2 focus:outline-none focus:ring-0"
+                />
+                {type}
+              </label>
+            ))}
+          </div>
           <div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
+            {/* <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
                   width="20"
@@ -73,8 +98,8 @@ export default function SignUpForm() {
                 </svg>
                 Sign in with X
               </button>
-            </div>
-            <div className="relative py-3 sm:py-5">
+            </div> */}
+            {/* <div className="relative py-3 sm:py-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
               </div>
@@ -83,7 +108,7 @@ export default function SignUpForm() {
                   Or
                 </span>
               </div>
-            </div>
+            </div> */}
             <form>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -166,7 +191,7 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Button --> */}
                 <div>
-                  <button type="button" className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                  <button onClick={handleSignUp} type="button" className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                     Sign Up
                   </button>
                 </div>

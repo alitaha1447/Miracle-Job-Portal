@@ -9,8 +9,10 @@ import {
 // import { BsThreeDotsVertical } from "react-icons/bs";
 // import Select from "react-select";
 // import Input from "../../components/form/input/InputField";
+
 import { FiSearch, FiChevronDown, FiX, FiEye } from "react-icons/fi";
-import { FaComment } from "react-icons/fa";
+import { FaUsers, FaComment, FaHandshake } from "react-icons/fa";
+import { MdWorkOutline } from "react-icons/md";
 // import { Modal } from '../../components/ui/modal';
 import CommentModal from '../../components/customModal/commentModal/CommentModal';
 
@@ -140,62 +142,96 @@ const JobsFilter: React.FC<JobsFilterProps> = ({
 
 const StudentDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
-    const [commentOpenFor, setCommentOpenFor] = useState<number | null>(null);
-    const [commentsByRow, setCommentsByRow] = useState<Record<number, Comment[]>>({
-        // seed data (optional)
-        // 0: [
-        //     {
-        //         id: "c1",
-        //         author: "Admin",
-        //         text: "Please submit resume PDF.",
-        //         createdAt: "2025-09-06 10:15",
-        //         replies: [
-        //             { id: "r1", author: "Taha", text: "Uploaded now.", createdAt: "2025-09-06 10:20" },
-        //         ],
-        //     },
-        // ],
-    });
+    const [isCommentModalOpen, setIsCommentModalOpen] = useState<number | null>(null);
+    const [commentLists, setCommentLists] = useState<Comment[][]>([])
 
-    const openComment = (idx: number) => setCommentOpenFor(idx);
-    const closeComment = () => setCommentOpenFor(null);
+    const toggleCommentModal = (id: number) => {
+        setIsCommentModalOpen((prev) => prev === id ? null : id);
+    }
 
+    // Add top-level comment
     const onSendComment = (text: string) => {
-        if (commentOpenFor === null) return;
-        setCommentsByRow((prev) => {
-            const list = prev[commentOpenFor] ?? [];
-            return {
-                ...prev,
-                [commentOpenFor]: [
-                    ...list,
-                    {
-                        id: crypto.randomUUID(),
-                        author: "You",
-                        text,
-                        createdAt: new Date().toLocaleString(),
-                    },
-                ],
-            };
+        if (isCommentModalOpen === null) return;
+        setCommentLists(prev => {
+            const updated = [...prev];
+            if (!updated[isCommentModalOpen]) updated[isCommentModalOpen] = [];
+            updated[isCommentModalOpen] = [
+                ...updated[isCommentModalOpen],
+                {
+                    id: crypto.randomUUID(),
+                    author: "You",
+                    text,
+                    createdAt: new Date().toLocaleString(),
+                }
+            ];
+            return updated;
+        });
+    };
+
+    // Recursively add reply to correct comment (by id)
+    const addReplyRecursively = (comments: Comment[], commentId: string, text: string): Comment[] => {
+        return comments.map(c => {
+            if (c.id === commentId) {
+                console.log('first')
+                return {
+                    ...c,
+                    replies: [
+                        ...(c.replies || []),
+                        {
+                            id: crypto.randomUUID(),
+                            author: "reply by TAHA",
+                            text,
+                            createdAt: new Date().toLocaleString(),
+                        }
+                    ]
+                };
+            } else if (c.replies) {
+                console.log('second')
+                return {
+                    ...c,
+                    replies: addReplyRecursively(c.replies, commentId, text)
+                };
+            }
+            console.log('third')
+            return c;
         });
     };
 
     const onSendReply = (commentId: string, text: string) => {
-        if (commentOpenFor === null) return;
-        setCommentsByRow((prev) => {
-            const list = prev[commentOpenFor] ?? [];
-            const next = list.map((c) =>
-                c.id === commentId
-                    ? {
-                        ...c,
-                        replies: [
-                            ...(c.replies ?? []),
-                            { id: crypto.randomUUID(), author: "You", text, createdAt: new Date().toLocaleString() },
-                        ],
-                    }
-                    : c
-            );
-            return { ...prev, [commentOpenFor]: next };
+        if (isCommentModalOpen === null) return;
+        setCommentLists(prev => {
+            const updated = [...prev];
+            if (!updated[isCommentModalOpen]) updated[isCommentModalOpen] = [];
+            updated[isCommentModalOpen] = addReplyRecursively(updated[isCommentModalOpen], commentId, text);
+            console.log(updated[isCommentModalOpen])
+            return updated;
         });
     };
+
+    // Recursively delete comment or reply by id
+    const deleteRecursively = (comments: Comment[], commentId: string): Comment[] => (
+        comments
+            .filter(c => c.id !== commentId)
+            .map(c => ({
+                ...c,
+                replies: c.replies ? deleteRecursively(c.replies, commentId) : []
+            }))
+    );
+
+    const onDeleteCommentById = (commentId: string) => {
+        if (isCommentModalOpen === null) return;
+        setCommentLists(prev => {
+            const updated = [...prev];
+            updated[isCommentModalOpen] = deleteRecursively(updated[isCommentModalOpen] || [], commentId);
+            return updated;
+        });
+    };
+
+
+
+
+
+
 
     // Update a specific row's status
     const handleApplyChange = (rowIndex: number, newStatus: string) => {
@@ -208,7 +244,59 @@ const StudentDashboard: React.FC = () => {
     return (
         <>
             <div>
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-2'>
+                    <div
+                        // onClick={toggleTotalStudent}
+                        className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+                            <FaUsers className="text-gray-800 size-6 dark:text-white/90" />
+                        </div>
+                        <div className="mt-5">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                Total Jobs Applied
+                            </span><br />
+                            <span className="mt-2 font-bold text-gray-800 dark:text-white/90">
+                                30
+                            </span>
+                        </div>
+                    </div>
 
+                    {/* 2. Selected & Rejected */}
+                    <div
+                        //  onClick={toggleSelectionStatus} 
+                        className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl dark:bg-green-900/30">
+                            <MdWorkOutline className="text-blue-600 size-6 dark:text-blue-400" />
+                        </div>
+                        <div className="mt-5">
+
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                You are best suits for <strong className="text-[1rem] font-bold text-blue-600 dark:text-blue-400">
+                                    30
+                                </strong> open vacancies
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    {/* 3. Upcoming Interviews */}
+                    <div
+                        // onClick={toggleInterviewList} 
+                        className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-xl dark:bg-red-900/30">
+                            <FaHandshake className="text-red-600 size-6 dark:text-red-400" />
+                        </div>
+                        <div className="mt-5">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                Job ofered by <strong className="text-[1rem] mt-2 font-bold text-red-600 dark:text-red-400">2</strong> compnaies
+                            </span><br />
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                Appointment confirmation pending <strong className="text-[1rem] mt-2 font-bold text-red-600 dark:text-red-400">2</strong>
+                            </span>
+                        </div>
+                    </div>
+                </div>
                 <div className="space-y-6">
                     <div
                         className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]`}
@@ -428,7 +516,7 @@ const StudentDashboard: React.FC = () => {
 
                                                                 <button
                                                                     type="button"
-                                                                    onClick={() => openComment(idx)}
+                                                                    onClick={() => toggleCommentModal(idx)}
                                                                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
                                                                 >
                                                                     <FaComment className="text-sm" />
@@ -521,7 +609,7 @@ const StudentDashboard: React.FC = () => {
                                                 <button className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700">
                                                     View Attachments
                                                 </button>
-                                                <button onClick={() => openComment(idx)} className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700">
+                                                <button onClick={() => toggleCommentModal(idx)} className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700">
                                                     Comment
                                                 </button>
                                             </div>
@@ -539,14 +627,13 @@ const StudentDashboard: React.FC = () => {
             </div>
             {/* Comment Modal */}
             <CommentModal
-                isOpen={commentOpenFor !== null}
-                onClose={closeComment}
-                title={
-                    commentOpenFor !== null ? `Comments — Row ${commentOpenFor + 1}` : "Comments"
-                }
-                comments={commentOpenFor !== null ? commentsByRow[commentOpenFor] ?? [] : []}
+                isOpen={isCommentModalOpen !== null}
+                onClose={() => setIsCommentModalOpen(null)}
+                title={`Comments for Job ${isCommentModalOpen !== null ? tableData[isCommentModalOpen].jobTitle : ''}`}
+                commentLists={isCommentModalOpen !== null ? commentLists[isCommentModalOpen] || [] : []}
                 onSendComment={onSendComment}
                 onSendReply={onSendReply}
+                onDeleteCommentById={onDeleteCommentById}
             />
         </>
 

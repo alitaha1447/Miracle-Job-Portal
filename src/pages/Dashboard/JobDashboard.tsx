@@ -14,6 +14,10 @@ import {
 } from "../../components/ui/table";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { MdWorkOutline, MdPauseCircleOutline } from "react-icons/md";
+import { FaDoorOpen, FaLock } from "react-icons/fa";
+import { FaUsers, FaCalendarCheck } from "react-icons/fa";
+import { MdPendingActions } from "react-icons/md";
 // import Badge from "../../components/ui/badge/Badge";
 import { Modal } from "../../components/ui/modal";
 import Button from "../../components/ui/button/Button";
@@ -277,6 +281,69 @@ const JobDashboard: React.FC = () => {
                 description="This is React.js Basic Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
             /> */}
                 {/* <PageBreadcrumb pageTitle="Basic Tables" /> */}
+                <div className='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 mb-2'>
+                    <div
+                        // onClick={toggleTotalStudent}
+                        className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+                            <MdWorkOutline className="text-gray-800 size-6 dark:text-white/90" />
+                        </div>
+                        <div className="mt-5">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                Total vacancies - <strong className="text-[1.1rem] font-bold text-blue-600 dark:text-blue-400">
+                                    5
+                                </strong>
+                            </span><br />
+                            <div className="mt-2 flex flex-wrap items-center gap-4">
+                                <span className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <FaDoorOpen className="text-blue-600 dark:text-blue-400" size={16} aria-hidden />
+                                    Open - <strong className="text-[1.05rem] font-semibold text-blue-600 dark:text-blue-400">5</strong>
+                                </span>
+
+                                <span className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <MdPauseCircleOutline className="text-yellow-600 dark:text-yellow-400" size={18} aria-hidden />
+                                    Hold - <strong className="text-[1.05rem] font-semibold text-blue-600 dark:text-blue-400">5</strong>
+                                </span>
+
+                                <span className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <FaLock className="text-gray-500 dark:text-gray-400" size={16} aria-hidden />
+                                    Closed - <strong className="text-[1.05rem] font-semibold text-blue-600 dark:text-blue-400">5</strong>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* 2. Selected & Rejected */}
+                    <div
+                        // onClick={toggleTotalStudent}
+                        className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
+                        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
+                            <FaUsers className="text-gray-800 size-6 dark:text-white/90" />
+                        </div>
+                        <div className="mt-5">
+                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                Total applicant - <strong className="text-[1.1rem] font-bold text-blue-600 dark:text-blue-400">
+                                    50
+                                </strong>
+                            </span><br />
+                            <div className="mt-2 flex flex-wrap items-center gap-4">
+                                <span className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <FaCalendarCheck className="text-green-600 dark:text-green-400" size={16} aria-hidden />
+                                    Upcoming interviews -{" "}
+                                    <strong className="text-[1.05rem] font-semibold text-blue-600 dark:text-blue-400">5</strong>
+                                </span>
+
+                                <span className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <MdPendingActions className="text-orange-600 dark:text-orange-400" size={18} aria-hidden />
+                                    Joining pending -{" "}
+                                    <strong className="text-[1.05rem] font-semibold text-blue-600 dark:text-blue-400">5</strong>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
                 <div className="space-y-6">
                     {/* <ComponentCard title="Jobs List"> */}
                     <div
