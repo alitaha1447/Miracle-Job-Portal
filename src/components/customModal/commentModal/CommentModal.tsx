@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FiSend, FiX } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 import { MdDeleteForever } from "react-icons/md";
 import { Modal } from "../../ui/modal"; // Make sure Modal is available
 
@@ -49,13 +49,13 @@ const CommentModal: React.FC<CommentModalProps> = ({
                         <span className="text-xs text-gray-500">{item.createdAt}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* {onDeleteCommentById && (
-                        <MdDeleteForever
-                            className="text-red-500 cursor-pointer"
-                            title="Delete"
-                            onClick={() => onDeleteCommentById(item.id)}
-                        />
-                    )} */}
+                        {onDeleteCommentById && (
+                            <MdDeleteForever
+                                className="text-red-500 cursor-pointer"
+                                title="Delete"
+                                onClick={() => onDeleteCommentById(item.id)}
+                            />
+                        )}
 
                         {level < MAX_NEST_LEVEL && (
                             <button
