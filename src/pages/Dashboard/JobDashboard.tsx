@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router';
 
 // import PageBreadcrumb from "../../components/common/PageBreadCrumb";
@@ -27,6 +27,8 @@ import Label from "../../components/form/Label";
 import ReactQuill from 'react-quill';
 // import Select from "react-select";
 import CreatableSelect from 'react-select/creatable';
+import Select, { MultiValue } from "react-select";
+
 
 // import { Dropdown } from '../../components/ui/dropdown/Dropdown';
 
@@ -117,6 +119,10 @@ const tableData = [
 //     { value: "hybrid", label: "Hybrid" },
 // ];
 
+type ColumnField = {
+    value: number;
+    label: string;
+}
 
 type Job = {
     id: number;
@@ -190,6 +196,29 @@ const jobs: Job[] = [
     },
 ];
 
+const columnFields: ColumnField[] = [
+    { value: 0, label: 'S.No.' },
+    { value: 1, label: 'Role' },
+    { value: 2, label: 'Skill' },
+    { value: 3, label: 'Min Qualification	' },
+    { value: 4, label: 'Salary' },
+    { value: 5, label: 'Min /Max age	' },
+    { value: 6, label: 'Job Type	' },
+    { value: 7, label: 'Job Description	' },
+    { value: 8, label: 'Status' },
+    { value: 9, label: 'Last Submission Date	' },
+    { value: 10, label: 'Total Applicant	' },
+    { value: 11, label: 'Action' },
+]
+
+// type Row = {
+//     id: number,
+//     role:string,
+//     skill:string,
+//     age:any,
+//     // jobType
+// }
+
 
 const JobDashboard: React.FC = () => {
     const navigate = useNavigate();
@@ -210,7 +239,140 @@ const JobDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
     const [openModalId, setOpenModalId] = useState<number | null>(null);
     const selected = openModalId !== null ? jobs.find((j) => j.id === openModalId) : null;
+    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>(columnFields.slice(0, 4));
 
+    const columnMap = useMemo(() => ({
+        0: { header: "S.No.", render: (_r: any, idx: number) => idx + 1 },
+        1: { header: "Role", render: (r: any) => r.role },
+        2: { header: "Skill", render: (r: any) => r.skill },
+        3: { header: "Min Qualification", render: (r: any) => r.qualification },
+        4: { header: "Salary", render: (r: any) => r.salary },
+        5: { header: "Min /Max age", render: (r: any) => r.date },
+        6: { header: "Job Type", render: (r: any) => (r.jobType) },
+        7: {
+            header: "Job Description		", render: (_r: any, idx: number) => (
+                <button
+                    type="button"
+                    onClick={() => toggleDescModal(idx)}
+                    className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
+                >
+
+                    {'Description'}
+                </button>
+            )
+        },
+        8: {
+            header: "Status	", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <select
+                        value={rows[idx].status}
+                        onChange={(e) => handleStatusChange(idx, e.target.value)}
+                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                               bg-white text-gray-700 hover:opacity-90 transition
+                                               focus:outline-none focus:ring focus:ring-brand-500/10
+                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                    >
+                        {STATUS_OPTIONS.map((opt) => (
+                            <option
+                                key={opt}
+                                value={opt}
+                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                            >
+                                {opt}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Chevron */}
+                    <svg
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+            )
+        },
+
+        9: { header: "Last Submission Date	", render: (r: any) => r.date },
+        10: {
+            header: "Total Applicant	", render: (r: any) => (
+                <button
+                    className="text-center text-[black] px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                    onClick={() => {
+                        navigate("/participants-list");
+                        closeMenu();
+                    }}
+                >
+                    {r.assignedBy}
+                </button>
+            )
+        },
+        11: {
+            header: "Action", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <button
+                        onClick={() => toggleRowMenu(idx)}
+                        className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
+                        aria-haspopup="menu"
+                        aria-expanded={openMenuIdx === idx}
+                        style={{ lineHeight: 0 }}
+                    >
+                        <BsThreeDotsVertical size={20} />
+                        <span className="sr-only">Open actions</span>
+                    </button>
+                    {openMenuIdx === idx && (
+                        <div
+                            className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                            onClick={closeMenu}
+                        >
+                            <button
+                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
+                                onClick={() => {
+                                    navigate("/participants-list");
+                                    closeMenu();
+                                }}
+                            >
+                                View Participants
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )
+        },
+
+    } as const), [rows]);
+
+    const selectedValues = useMemo(
+        () => selectedcolumnFields.map(s => s.value),
+        [selectedcolumnFields]
+    );
+
+    const visibleCols = useMemo(() => {
+        // console.log("Recomputing visibleCols with useMemo...");
+        return columnFields
+            .filter(cf => selectedValues.includes(cf.value))
+            .map(cf => {
+
+                return (
+                    {
+                        key: cf.value,
+                        ...columnMap[cf.value as keyof typeof columnMap],
+                    }
+                )
+            })
+        // .map(cf => ({
+        //     key: cf.value,
+        //     ...columnMap[cf.value as keyof typeof columnMap],
+        // }));
+
+    }, [selectedValues, columnMap]);
 
     const toggleDescModal = (id: number) => {
         setOpenModalId(id); // store the selected id/index
@@ -221,14 +383,10 @@ const JobDashboard: React.FC = () => {
     };
 
 
-
-
     // Update a specific row's status
     const handleStatusChange = (rowIndex: number, newStatus: string) => {
         setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, status: newStatus } : r)));
     };
-
-    // console.log(rows)
 
 
     const toggleRowMenu = (idx: number) =>
@@ -276,11 +434,6 @@ const JobDashboard: React.FC = () => {
     return (
         <>
             <div>
-                {/* <PageMeta
-                title="React.js Basic Tables Dashboard | TailAdmin - Next.js Admin Dashboard Template"
-                description="This is React.js Basic Tables Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
-            /> */}
-                {/* <PageBreadcrumb pageTitle="Basic Tables" /> */}
                 <div className='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-2 mb-2'>
                     <div
                         // onClick={toggleTotalStudent}
@@ -366,232 +519,47 @@ const JobDashboard: React.FC = () => {
                         {/* Card Body */}
                         <div className="hidden lg:block p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                             <div className="space-y-6">
+                                <div className='hidden lg:block'>
+                                    <Select
+                                        isMulti
+                                        options={columnFields}
+                                        value={selectedcolumnFields}
+                                        onChange={(selected: MultiValue<ColumnField>) => {
+                                            setSelectedcolumnFields(selected);
+                                        }}
+                                        placeholder="Select fields"
+                                        defaultValue={columnFields.slice(0, 4)} // 👈 first 4 selected by default
+
+                                    />
+                                </div>
                                 <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                                     <div className="max-w-full overflow-x-auto">
-                                        <div className="min-w-[1102px]">
-                                            <Table>
+                                        <div className="min-w-[0]">
+                                            <Table className="table-auto">
                                                 {/* Table Header */}
                                                 <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                                     <TableRow>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Role
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Skill
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Min Qualification
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Salary
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Min /Max age
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Job Type
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Job Description
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Status
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Last Submission Date
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Total Applicant
+                                                        {visibleCols.map(col => (
+                                                            <TableCell key={col.key} className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                                {col.header}
+                                                            </TableCell>
+                                                        ))}
 
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Action
-                                                        </TableCell>
                                                     </TableRow>
                                                 </TableHeader>
 
                                                 {/* Table Body */}
                                                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                                    {tableData.map((order, idx) => (
+                                                    {tableData.map((row, idx) => (
                                                         <TableRow key={idx}>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.role}
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-
-                                                                {order.skill}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-
-                                                                {order.qualification}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.salary}
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.age}
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.jobType}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => toggleDescModal(idx)}
-                                                                    className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                                >
-                                                                    {/* {order.desc} */}
-                                                                    {'Description'}
-                                                                </button>
-                                                            </TableCell>
-                                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <div className="relative inline-flex">
-
-                                                                    <button
-                                                                        // type="button"
-                                                                        onClick={() => toggleStatusMenu(idx)}
-                                                                        className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-
-
-                                                                    >
-                                                                        {order.status}
-                                                                    </button>
-                                                                 
-                                                                    <Dropdown
-                                                                        isOpen={openStatusIdx === idx}
-                                                                        onClose={closeStatusMenu}
-                                                                        className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                    >
-                                                                        <button
-                                                                            // type="button"
-                                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                            Update Status
-                                                                        </button>
-
-                                                                    </Dropdown>
-                                                                </div>
-
-                                                            </TableCell> */}
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <div className="relative inline-flex">
-                                                                    <select
-                                                                        value={rows[idx].status}
-                                                                        onChange={(e) => handleStatusChange(idx, e.target.value)}
-                                                                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
-                                               bg-white text-gray-700 hover:opacity-90 transition
-                                               focus:outline-none focus:ring focus:ring-brand-500/10
-                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
-                                                                    >
-                                                                        {STATUS_OPTIONS.map((opt) => (
-                                                                            <option
-                                                                                key={opt}
-                                                                                value={opt}
-                                                                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                                                            >
-                                                                                {opt}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-
-                                                                    {/* Chevron */}
-                                                                    <svg
-                                                                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                                        viewBox="0 0 20 20"
-                                                                        fill="currentColor"
-                                                                        aria-hidden="true"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
-                                                                            clipRule="evenodd"
-                                                                        />
-                                                                    </svg>
-                                                                </div>
-                                                            </TableCell>
-
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.date}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <button
-                                                                    className="text-center text-[black] px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                    onClick={() => {
-                                                                        navigate("/participants-list");
-                                                                        closeMenu();
-                                                                    }}
-                                                                >
-                                                                    {order.assignedBy}
-                                                                </button>
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <div className="relative inline-flex">
-                                                                    <button
-                                                                        onClick={() => toggleRowMenu(idx)}
-                                                                        className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                                                                        aria-haspopup="menu"
-                                                                        aria-expanded={openMenuIdx === idx}
-                                                                        style={{ lineHeight: 0 }}
-                                                                    >
-                                                                        <BsThreeDotsVertical size={20} />
-                                                                        <span className="sr-only">Open actions</span>
-                                                                    </button>
-                                                                    {openMenuIdx === idx && (
-                                                                        <div
-                                                                            className="absolute right-0 top-full z-50 mt-2 flex w-64 flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                            onClick={closeMenu}
-                                                                        >
-                                                                            <button
-                                                                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800"
-                                                                                onClick={() => {
-                                                                                    navigate("/participants-list");
-                                                                                    closeMenu();
-                                                                                }}
-                                                                            >
-                                                                                View Participants
-                                                                            </button>
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-                                                            </TableCell>
+                                                            {visibleCols.map(col => (
+                                                                <TableCell key={col.key} className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                                    {col.render(row, idx)}
+                                                                </TableCell>
+                                                            ))}
                                                         </TableRow>
                                                     ))}
+
                                                 </TableBody>
                                             </Table>
                                         </div>
@@ -708,12 +676,13 @@ const JobDashboard: React.FC = () => {
                                             <span className="text-gray-500">Job Description</span>
                                             <button
                                                 type="button"
-                                                // onClick={() => toggleStatusMenu(index)}
+                                                onClick={() => toggleDescModal(index)}
                                                 className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
                                             >
                                                 {'Description'}
                                                 {/* {item.desc} */}
                                             </button>
+
                                         </div>
                                     </div>
 

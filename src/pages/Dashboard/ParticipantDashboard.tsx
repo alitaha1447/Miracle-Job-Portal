@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import {
     Table,
     TableBody,
@@ -14,7 +14,7 @@ import Label from "../../components/form/Label";
 import TextArea from '../../components/form/input/TextArea';
 import Checkbox from '../../components/form/input/Checkbox';
 import { FiEye } from "react-icons/fi";
-import Select from "react-select";
+import Select, { MultiValue } from "react-select";
 // import { Dropdown } from '../../components/ui/dropdown/Dropdown';
 import DatePicker from "react-datepicker";
 // import StartInterview from '../../components/customModal/startInterview/StartInterview';
@@ -45,6 +45,26 @@ const tableData = [
     { name: 'Taha', email: 'ali@gmail.com', mobile: '1236547890', applyDate: '20-02-2026', remark: 'Pending', status: 'Joined' },
 ]
 
+type ColumnField = {
+    value: number;
+    label: string;
+}
+
+const columnFields: ColumnField[] = [
+    { value: 0, label: 'S.No.' },
+    { value: 1, label: 'Name' },
+    { value: 2, label: 'Email' },
+    { value: 3, label: 'Mobile No.' },
+    { value: 4, label: 'Apply Date' },
+    { value: 5, label: 'Remark' },
+    { value: 6, label: 'View Resume' },
+    { value: 7, label: 'Add Certificate	' },
+    { value: 8, label: 'View Qualification' },
+    { value: 9, label: 'View Experience' },
+    { value: 10, label: 'Status' },
+    { value: 11, label: 'Action' },
+]
+
 const ParticipantDashboard: React.FC = () => {
     const [desktopOpenStatusIdx, setDesktopOpenStatusIdx] = useState<number | null>(null);
     const [mobileOpenStatusIdx, setMobileOpenStatusIdx] = useState<number | null>(null);
@@ -62,8 +82,169 @@ const ParticipantDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
 
     const [observation, setObservation] = useState<string>('')
+    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>(columnFields.slice(0, 4));
 
+    const selectedValues = useMemo(
+        () => selectedcolumnFields.map(s => s.value),
+        [selectedcolumnFields]
+    );
 
+    const columnMap = useMemo(() => ({
+        0: { header: "S.No.", render: (_r: any, idx: number) => idx + 1 },
+        1: { header: "Name", render: (r: any) => r.name },
+        2: { header: "Email", render: (r: any) => r.email },
+        3: { header: "Mobile No.", render: (r: any) => r.mobile },
+        4: { header: "Apply Date", render: (r: any) => r.applyDate },
+        5: { header: "Remark", render: (r: any) => r.remark },
+        6: { header: "View Resume", render: (r: any) => (r.jobType) },
+        7: {
+            header: "Add Certificate	", render: (_r: any) => (
+                <button
+                    type="button"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
+                >
+                    <FiEye className="text-sm" />
+                    View Certificate
+                </button>
+            )
+        },
+        8: {
+            header: "View Qualification	", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <select
+                        value={rows[idx].status}
+                        onChange={(e) => handleStatusChange(idx, e.target.value)}
+                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                                   bg-white text-gray-700 hover:opacity-90 transition
+                                                   focus:outline-none focus:ring focus:ring-brand-500/10
+                                                   dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                    >
+                        {STATUS_OPTIONS.map((opt) => (
+                            <option
+                                key={opt}
+                                value={opt}
+                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                            >
+                                {opt}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Chevron */}
+                    <svg
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+            )
+        },
+
+        9: { header: "View Experience", render: (r: any) => r.date },
+        10: {
+            header: "Status", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <select
+                        value={rows[idx].status}
+                        onChange={(e) => handleStatusChange(idx, e.target.value)}
+                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                               bg-white text-gray-700 hover:opacity-90 transition
+                                               focus:outline-none focus:ring focus:ring-brand-500/10
+                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                    >
+                        {STATUS_OPTIONS.map((opt) => (
+                            <option
+                                key={opt}
+                                value={opt}
+                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                            >
+                                {opt}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Chevron */}
+                    <svg
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+            )
+        },
+        11: {
+            header: "Action", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <button
+                        onClick={() => toggleDesktopStatusMenu(idx)}
+                        className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
+                        aria-haspopup="menu"
+                        style={{ lineHeight: 0 }}
+                    >
+                        <BsThreeDotsVertical size={20} />
+                    </button>
+                    {/* Status dropdown */}
+                    {desktopOpenStatusIdx === idx && (
+
+                        <div
+                            className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                        >
+                            <button
+                                onClick={() => toggleStartInterview()}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                Start Interview
+                            </button>
+                            <button
+                                onClick={toggleUploadLetter}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                Upload Appointment letter
+                            </button>
+                            <button
+                                onClick={toggleScheduleInterview}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                Schedule Interview
+                            </button>
+                            <button
+                                // onClick={toggleScheduleInterview}
+                                type="button"
+                                className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                Send Intimation
+                            </button>
+                        </div>
+                    )}
+                </div>
+            )
+        },
+
+    } as const), [rows]);
+
+    // const visibleCols = columnFields.filter(cf => selectedValues.includes(cf.value))
+
+    const visibleCols = useMemo(() => {
+        return columnFields.filter((cf) => selectedValues.includes(cf.value))
+            .map((cf) => ({
+                key: cf.value,
+                ...columnMap[cf.value as keyof typeof columnMap],
+            }))
+    }, [selectedValues])
+    console.log(visibleCols)
     // Update a specific row's status
     const handleStatusChange = (rowIndex: number, newStatus: string) => {
         setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, status: newStatus } : r)));
@@ -118,6 +299,7 @@ const ParticipantDashboard: React.FC = () => {
         <>
 
             <div className="space-y-6">
+
                 <div
                     className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]`}
                 >
@@ -135,6 +317,19 @@ const ParticipantDashboard: React.FC = () => {
                     </div>
 
                     {/* Desktop Table View */}
+                    <div className='hidden lg:block'>
+                        <Select
+                            isMulti
+                            options={columnFields}
+                            value={selectedcolumnFields}
+                            onChange={(selected: MultiValue<ColumnField>) => {
+                                setSelectedcolumnFields(selected);
+                            }}
+                            placeholder="Select fields"
+                            defaultValue={columnFields.slice(0, 4)} // 👈 first 4 selected by default
+
+                        />
+                    </div>
                     <div className=" p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                         <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                             <div className="max-w-full overflow-x-auto">
@@ -143,188 +338,24 @@ const ParticipantDashboard: React.FC = () => {
                                         {/* Table Header */}
                                         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                             <TableRow>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    <div />
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    S.No.
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Name
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Email
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Mobile No.
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Apply Date
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Remark
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    View Resume
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Add Certificate
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    View Qualification
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    View Experience
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Status
-                                                </TableCell>
-                                                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                    Action
-                                                </TableCell>
+                                                {visibleCols.map(col => (
+                                                    <TableCell key={col.key} className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                        {col.header}
+                                                    </TableCell>
+                                                ))}
+
                                             </TableRow>
                                         </TableHeader>
 
                                         {/* Table Body */}
                                         <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                            {tableData.map((order, index) => (
-                                                <TableRow key={index}>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <Checkbox />
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {index + 1}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {order.name}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {order.email}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {order.mobile}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {order.applyDate}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        {order.remark}
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <button
-                                                            type="button"
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                        >
-                                                            <FiEye className="text-sm" />
-                                                            View Resume
-                                                        </button>
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <button
-                                                            type="button"
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                        >
-                                                            <FiEye className="text-sm" />
-                                                            View Certificate
-                                                        </button>
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <button
-                                                            type="button"
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                        >
-                                                            <FiEye className="text-sm" />
-                                                            View Qualification
-                                                        </button>
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <button
-                                                            type="button"
-                                                            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                        >
-                                                            <FiEye className="text-sm" />
-                                                            View Experience
-                                                        </button>
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                        <div className="relative inline-flex">
-                                                            <select
-                                                                value={rows[index].status}
-                                                                onChange={(e) => handleStatusChange(index, e.target.value)}
-                                                                className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
-                                               bg-white text-gray-700 hover:opacity-90 transition
-                                               focus:outline-none focus:ring focus:ring-brand-500/10
-                                               dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
-                                                            >
-                                                                {STATUS_OPTIONS.map((opt) => (
-                                                                    <option
-                                                                        key={opt}
-                                                                        value={opt}
-                                                                        className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                                                    >
-                                                                        {opt}
-                                                                    </option>
-                                                                ))}
-                                                            </select>
-
-                                                            {/* Chevron */}
-                                                            <svg
-                                                                className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                                viewBox="0 0 20 20"
-                                                                fill="currentColor"
-                                                                aria-hidden="true"
-                                                            >
-                                                                <path
-                                                                    fillRule="evenodd"
-                                                                    d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
-                                                                    clipRule="evenodd"
-                                                                />
-                                                            </svg>
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                        <div className="relative inline-flex">
-                                                            <button
-                                                                onClick={() => toggleDesktopStatusMenu(index)}
-                                                                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                                                                aria-haspopup="menu"
-                                                                style={{ lineHeight: 0 }}
-                                                            >
-                                                                <BsThreeDotsVertical size={20} />
-                                                            </button>
-                                                            {/* Status dropdown */}
-                                                            {desktopOpenStatusIdx === index && (
-                                                                <div
-                                                                    className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                                >
-                                                                    <button
-                                                                        onClick={() => toggleStartInterview()}
-                                                                        type="button"
-                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                        Start Interview
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={toggleUploadLetter}
-                                                                        type="button"
-                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                        Upload Appointment letter
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={toggleScheduleInterview}
-                                                                        type="button"
-                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                        Schedule Interview
-                                                                    </button>
-                                                                    <button
-                                                                        // onClick={toggleScheduleInterview}
-                                                                        type="button"
-                                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                                        Send Intimation
-                                                                    </button>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    </TableCell>
+                                            {tableData.map((row, idx) => (
+                                                <TableRow key={idx}>
+                                                    {visibleCols.map(col => (
+                                                        <TableCell key={col.key} className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            {col.render(row, idx)}
+                                                        </TableCell>
+                                                    ))}
                                                 </TableRow>
                                             ))}
                                         </TableBody>

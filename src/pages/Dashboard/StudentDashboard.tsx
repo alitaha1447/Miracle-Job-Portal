@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
     Table,
     TableBody,
@@ -7,7 +7,7 @@ import {
     TableRow,
 } from "../../components/ui/table";
 // import { BsThreeDotsVertical } from "react-icons/bs";
-// import Select from "react-select";
+import Select, { MultiValue } from "react-select";
 // import Input from "../../components/form/input/InputField";
 
 import { FiSearch, FiChevronDown, FiX, FiEye } from "react-icons/fi";
@@ -50,6 +50,11 @@ type Comment = {
     replies?: { id: string; author: string; text: string; createdAt: string }[];
 };
 
+type ColumnField = {
+    value: number;
+    label: string;
+}
+
 
 const DEFAULT_COUNTRIES = [
     { label: "Company Name", value: "1" },
@@ -57,6 +62,33 @@ const DEFAULT_COUNTRIES = [
     { label: "Skill", value: "3" },
     { label: "Job Title", value: "4" },
 ];
+
+const columnFields: ColumnField[] = [
+    { value: 0, label: 'S.No.' },
+    { value: 1, label: 'Company name' },
+    { value: 2, label: 'Job Title' },
+    { value: 3, label: 'Skill Required' },
+    { value: 4, label: 'Last Submission Date' },
+    { value: 5, label: 'Job Type' },
+    { value: 6, label: 'View Full Detail' },
+    { value: 7, label: 'View Attachments' },
+    { value: 8, label: 'Open To' },
+    { value: 9, label: 'Status' },
+    { value: 10, label: 'Action' },
+    { value: 11, label: 'Comment' },
+]
+
+// your row type
+type Row = {
+    id: number;
+    company: string;
+    jobTitle: string;
+    skill: string;
+    lastdate: string;
+    status: string;     // you also use this as Job Type text in your button
+    openTo: string;
+    // add any others you actually use
+};
 
 const JobsFilter: React.FC<JobsFilterProps> = ({
     countries = DEFAULT_COUNTRIES,
@@ -144,6 +176,110 @@ const StudentDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState<number | null>(null);
     const [commentLists, setCommentLists] = useState<Comment[][]>([])
+    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>(columnFields.slice(0, 4));
+    const [count, setCount] = useState(0); // Dummy state to test
+    console.log('type of --------------');
+
+    console.log(selectedcolumnFields);
+    console.log('type of --------------');
+
+    /** 1) Column map: how to render each column */
+    const columnMap = useMemo(() => ({
+        0: { header: "S.No.", render: (_r: Row, idx: number) => idx + 1 },
+        1: { header: "Company name", render: (r: Row) => r.company },
+        2: { header: "Job Title", render: (r: Row) => r.jobTitle },
+        3: { header: "Skill Required", render: (r: Row) => r.skill },
+        4: { header: "Last Submission Date", render: (r: Row) => r.lastdate },
+        5: {
+            header: "Job Type", render: (r: Row) => (
+                <div className="relative inline-flex">
+                    <button type="button" className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition">
+                        {r.status}
+                    </button>
+                </div>
+            )
+        },
+        6: {
+            header: "View Full Detail", render: (_r: Row) => (
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700">
+                    <FiEye className="text-sm" />
+                </button>
+            )
+        },
+        7: {
+            header: "View Attachments", render: (_r: Row) => (
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700">
+                    <FiEye className="text-sm" />
+                </button>
+            )
+        },
+        8: { header: "Open To", render: (r: Row) => r.openTo },
+        9: { header: "Status", render: (r: Row) => r.status },
+        10: {
+            header: "Action", render: (_r: Row, idx: number) => (
+                <div className="relative inline-flex">
+                    <select
+                        value={rows[idx].action}
+                        onChange={(e) => handleApplyChange(idx, e.target.value)}
+                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium bg-white text-gray-700
+                       hover:opacity-90 transition focus:outline-none focus:ring focus:ring-brand-500/10
+                       dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800">
+                        {APPLY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                    </select>
+                    <svg className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z" clipRule="evenodd" />
+                    </svg>
+                </div>
+            )
+        },
+        11: {
+            header: "Comment", render: (_r: Row, idx: number) => (
+                <button
+                    type="button"
+                    onClick={() => toggleCommentModal(idx)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700">
+                    <FaComment className="text-sm" />
+                </button>
+            )
+        },
+    } as const), [rows]);
+
+    // const columnMap = {
+    //     0: { header: "S.No.", render: (_r: any, idx: number) => idx + 1 },
+    //     1: { header: "Company name", render: (r: any) => r.company },
+    //     2: { header: "Job Title", render: (r: any) => r.jobTitle },
+    //     3: { header: "Skill Required", render: (r: any) => r.skill },
+    //     4: { header: "Last Submission Date", render: (r: any) => r.lastdate },
+    //     5: { header: "Job Type", render: (r: any) => r.jobType },
+    //     6: { header: "View Full Detail", render: () => <button>View</button> },
+    //     7: { header: "View Attachments", render: () => <button>View</button> },
+    //     8: { header: "Open To", render: (r: any) => r.openTo },
+    //     9: { header: "Status", render: (r: any) => r.status },
+    //     10: { header: "Action", render: (r: any) => r.action },
+    //     11: { header: "Comment", render: (r: any) => r.comment },
+    // };
+    /** 2) Filter by selected values */
+    const selectedValues = useMemo(
+        () => selectedcolumnFields.map(s => s.value),
+        [selectedcolumnFields]
+    );
+    // const selectedValues = selectedcolumnFields.map((s: any) => s.value);
+
+
+    /** 3) Visible columns in order */
+    const visibleCols = useMemo(() => {
+        // console.log("Recomputing visibleCols with useMemo...");
+
+        return columnFields
+            .filter(cf => selectedValues.includes(cf.value))
+            .map(cf => ({
+                key: cf.value,
+                ...columnMap[cf.value as keyof typeof columnMap],
+            }));
+
+    }, [selectedValues, columnMap]);
+
+    // const visibleCols = columnFields.filter((cf) => selectedValues.includes(cf.value));
 
     const toggleCommentModal = (id: number) => {
         setIsCommentModalOpen((prev) => prev === id ? null : id);
@@ -156,13 +292,13 @@ const StudentDashboard: React.FC = () => {
             const updated = [...prev];
             if (!updated[isCommentModalOpen]) updated[isCommentModalOpen] = [];
             updated[isCommentModalOpen] = [
-                ...updated[isCommentModalOpen],
                 {
                     id: crypto.randomUUID(),
                     author: "You",
                     text,
                     createdAt: new Date().toLocaleString(),
-                }
+                },
+                ...updated[isCommentModalOpen],
             ];
             return updated;
         });
@@ -172,27 +308,27 @@ const StudentDashboard: React.FC = () => {
     const addReplyRecursively = (comments: Comment[], commentId: string, text: string): Comment[] => {
         return comments.map(c => {
             if (c.id === commentId) {
-                console.log('first')
+
                 return {
                     ...c,
                     replies: [
-                        ...(c.replies || []),
                         {
                             id: crypto.randomUUID(),
                             author: "reply by TAHA",
                             text,
                             createdAt: new Date().toLocaleString(),
-                        }
+                        },
+                        ...(c.replies || []),
                     ]
                 };
             } else if (c.replies) {
-                console.log('second')
+
                 return {
                     ...c,
-                    replies: addReplyRecursively(c.replies, commentId, text)
+                    replies: addReplyRecursively(c.replies, commentId, text),
                 };
             }
-            console.log('third')
+
             return c;
         });
     };
@@ -203,7 +339,6 @@ const StudentDashboard: React.FC = () => {
             const updated = [...prev];
             if (!updated[isCommentModalOpen]) updated[isCommentModalOpen] = [];
             updated[isCommentModalOpen] = addReplyRecursively(updated[isCommentModalOpen], commentId, text);
-            console.log(updated[isCommentModalOpen])
             return updated;
         });
     };
@@ -227,20 +362,11 @@ const StudentDashboard: React.FC = () => {
         });
     };
 
-
-
-
-
-
-
     // Update a specific row's status
     const handleApplyChange = (rowIndex: number, newStatus: string) => {
         setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, action: newStatus } : r)));
     };
 
-    // const toggleCommentModal = (idx: number) => {
-    //     setOpenCommentModal(prev => (prev === idx ? null : idx));
-    // }
     return (
         <>
             <div>
@@ -306,18 +432,12 @@ const StudentDashboard: React.FC = () => {
                             <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
                                 Student Dashboard
                             </h3>
-                            {/* <button className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
-                            Add New Job
-                        </button> */}
-
 
                         </div>
-
 
                         {/* Card Body */}
                         <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                             <div className="space-y-6">
-
                                 <JobsFilter
                                     onSearch={({ country, query }) => {
                                         // call your API or set filters in state
@@ -325,223 +445,66 @@ const StudentDashboard: React.FC = () => {
                                         console.log({ country, query });
                                     }}
                                 />
+                                <div className='hidden lg:block'>
+                                    <Select
+                                        isMulti
+                                        options={columnFields}
+                                        value={selectedcolumnFields}
+                                        onChange={(selected: MultiValue<ColumnField>) => {
+                                            setSelectedcolumnFields(selected);
+                                        }}
+                                        placeholder="Select fields"
+                                        defaultValue={columnFields.slice(0, 4)} // 👈 first 4 selected by default
+
+                                    />
+                                </div>
+                                {/* Dummy Count Increment Button */}
+                                <button onClick={() => setCount(count + 1)}>
+                                    Increment Count (Current Count: {count})
+                                </button>
                                 {/* TABLE — desktop only (lg ≥ 1024px) */}
                                 <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                                     <div className="max-w-full overflow-x-auto">
-                                        <div className="min-w-[1102px]">
-                                            <Table>
-                                                {/* Table Header */}
+                                        <div
+                                            className="min-w-[1024px]"
+                                        >
+
+                                            <Table className="table-auto">
+
                                                 <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
                                                     <TableRow>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            S.No.
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Company name
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Job Title
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Skill Required
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Last Submission Date
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Job Type
-                                                        </TableCell>
-                                                        <TableCell
-                                                            // isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            View Full Detail
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            View Attachments
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Open To
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Status
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Action
-                                                        </TableCell>
-                                                        <TableCell
-                                                            isHeader
-                                                            className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                                                        >
-                                                            Comment
-                                                        </TableCell>
+                                                        {visibleCols.map(col => (
+                                                            <TableCell key={col.key} className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                                {col.header}
+                                                            </TableCell>
+                                                        ))}
+                                                        {/* {visibleCols.map((col) => (
+                                                            <TableCell key={col.value}>
+                                                                {columnMap[col.value]?.header}
+                                                            </TableCell>
+                                                        ))} */}
+
                                                     </TableRow>
                                                 </TableHeader>
-
-                                                {/* Table Body */}
                                                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                                    {tableData.map((order, idx) => (
-                                                        <TableRow key={idx}>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.id}
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-
-                                                                {order.company}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                {order.jobTitle}
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.skill}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.lastdate}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <div className="relative inline-flex">
-
-                                                                    <button
-                                                                        type="button"
-                                                                        // onClick={() => toggleStatusMenu(idx)}
-                                                                        className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-
-
-                                                                    >
-                                                                        {order.status}
-                                                                    </button>
-
-
-                                                                </div>
-
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {/* {order.jobType} */}
-                                                                <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                                >
-                                                                    <FiEye className="text-sm" />
-
-                                                                </button>
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {/* {order.detail} */}
-                                                                <button
-                                                                    type="button"
-                                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                                >
-                                                                    <FiEye className="text-sm" />
-
-                                                                </button>
-                                                            </TableCell>
-                                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            {order.attachemnt}
-                                                        </TableCell> */}
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.openTo}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                {order.status}
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                                <div className="relative inline-flex">
-                                                                    <select
-                                                                        value={rows[idx].action}
-                                                                        onChange={(e) => handleApplyChange(idx, e.target.value)}
-                                                                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
-                                                                                                      bg-white text-gray-700 hover:opacity-90 transition
-                                                                                                      focus:outline-none focus:ring focus:ring-brand-500/10
-                                                                                                      dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
-                                                                    >
-                                                                        {APPLY_OPTIONS.map((opt) => (
-                                                                            <option
-                                                                                key={opt}
-                                                                                value={opt}
-                                                                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                                                            >
-                                                                                {opt}
-                                                                            </option>
-                                                                        ))}
-                                                                    </select>
-
-                                                                    {/* Chevron */}
-                                                                    <svg
-                                                                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                                        viewBox="0 0 20 20"
-                                                                        fill="currentColor"
-                                                                        aria-hidden="true"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
-                                                                            clipRule="evenodd"
-                                                                        />
-                                                                    </svg>
-                                                                </div>
-                                                            </TableCell>
-                                                            <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => toggleCommentModal(idx)}
-                                                                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700"
-                                                                >
-                                                                    <FaComment className="text-sm" />
-
-                                                                </button>
-                                                            </TableCell>
-                                                            {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                            <div className="relative inline-flex">
-                                                                <button
-                                                                    // onClick={() => toggleRowMenu(idx)}
-                                                                    className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                                                                    aria-haspopup="menu"
-                                                                    // aria-expanded={openMenuIdx === idx}
-                                                                    style={{ lineHeight: 0 }}
-                                                                >
-                                                                    <BsThreeDotsVertical size={20} />
-                                                                    <span className="sr-only">Open actions</span>
-                                                                </button>
-
-
-                                                            </div>
-                                                        </TableCell> */}
-
+                                                    {tableData.map((row, idx) => (
+                                                        <TableRow key={row.id ?? idx}>
+                                                            {visibleCols.map(col => (
+                                                                <TableCell key={col.key} className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                                    {col.render(row, idx)}
+                                                                </TableCell>
+                                                            ))}
                                                         </TableRow>
                                                     ))}
+                                                    {/* {tableData.map((row, idx) => (
+                                                        <TableRow key={idx}>
+                                                            {visibleCols.map((col) => (
+                                                                <TableCell key={col.value}>
+                                                                    {columnMap[col.value]?.render(row, idx)}
+                                                                </TableCell>
+                                                            ))}
+                                                        </TableRow>
+                                                    ))} */}
                                                 </TableBody>
                                             </Table>
                                         </div>
@@ -554,7 +517,7 @@ const StudentDashboard: React.FC = () => {
                                             key={idx}
                                             className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]"
                                         >
-                                            {/* top line */}
+
                                             <div className="flex items-start justify-between gap-3">
                                                 <div>
                                                     <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
@@ -563,11 +526,10 @@ const StudentDashboard: React.FC = () => {
                                                     <p className="text-xs text-gray-500">{row.jobTitle}</p>
                                                 </div>
 
-                                                {/* example action spot */}
-                                                {/* put your three-dots/dropdown here if needed */}
+
                                             </div>
 
-                                            {/* details */}
+
                                             <div className="mt-3 space-y-1 text-sm">
                                                 <div className="flex justify-between">
                                                     <span className="text-gray-500">Skills</span>
@@ -601,7 +563,7 @@ const StudentDashboard: React.FC = () => {
                                                 </div>
                                             </div>
 
-                                            {/* quick actions */}
+
                                             <div className="mt-3 grid grid-cols-2 gap-2">
                                                 <button className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700">
                                                     View Full Detail
@@ -619,10 +581,7 @@ const StudentDashboard: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    {/* <BasicTableOne /> */}
 
-
-                    {/* </ComponentCard> */}
                 </div>
             </div>
             {/* Comment Modal */}

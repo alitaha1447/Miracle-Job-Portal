@@ -37,15 +37,14 @@ const CommentModal: React.FC<CommentModalProps> = ({
     const [replyInput, setReplyInput] = useState('');
 
     // Recursive rendering for nested comments/replies
-    const MAX_NEST_LEVEL = 50; // Reasonable max depth
+    // const MAX_NEST_LEVEL = 50; // Reasonable max depth
 
     const renderReplies = (items: Reply[], level = 0) => items.map(item => (
         <div key={item.id} style={{ marginLeft: level ? level * 10 : 0, marginBottom: 10, }}>
-            <div className="bg-[cyan] ">
-                <div className="rounded border p-2 mb-2 flex items-center justify-between">
-
+            <div className="border">
+                <div className="rounded pt-2 pr-2 pb-0 pl-2 mb-0 flex items-center justify-between">
                     <div>
-                        <span className="font-semibold text-gray-800 mr-2">{item.author}</span>
+                        <span className="font-semibold text-xs text-gray-800 mr-2">{item.author}</span>
                         <span className="text-xs text-gray-500">{item.createdAt}</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -57,54 +56,57 @@ const CommentModal: React.FC<CommentModalProps> = ({
                             />
                         )}
 
-                        {level < MAX_NEST_LEVEL && (
-                            <button
-                                className="text-xs px-2 py-1 border rounded text-blue-700"
-                                onClick={() => setReplyTo(replyTo === item.id ? null : item.id)}
-                            >
-                                {replyTo === item.id ? "Cancel" : "Reply"}
-                            </button>
-                        )}
+                        {/* {level < MAX_NEST_LEVEL && ( */}
+                        <button
+                            className="text-xs px-2 py-1 border rounded text-blue-700"
+                            onClick={() => setReplyTo(replyTo === item.id ? null : item.id)}
+                        >
+                            {replyTo === item.id ? "Cancel" : "Reply"}
+                        </button>
+                        {/* // )} */}
                     </div>
                 </div>
-                <div className="ml-1 text-sm text-gray-800 mb-2" style={{ whiteSpace: 'pre-wrap' }}>
+                <div className="ml-2 text-lg text-gray-800 mb-2" style={{ whiteSpace: 'pre-wrap' }}>
                     {item.text}
                 </div>
 
             </div>
 
             {/* Reply input only if less than max level */}
-            {level < MAX_NEST_LEVEL && replyTo === item.id && (
-                <div className="flex gap-2 my-2">
-                    <input
-                        value={replyInput}
-                        onChange={e => setReplyInput(e.target.value)}
-                        placeholder="Write a reply…"
-                        className="flex-1 h-9 border rounded px-2"
-                    />
-                    <button
-                        className="bg-gray-900 text-white px-3 rounded"
-                        type="button"
-                        onClick={() => {
-                            if (replyInput.trim()) {
-                                onSendReply(item.id, replyInput.trim());
-                                setReplyInput('');
-                                setReplyTo(null);
-                            }
-                        }}
-                    >
-                        <span className="ml-1">Reply</span>
-                    </button>
-                </div>
-            )}
+            {
+                // level < MAX_NEST_LEVEL &&
+                replyTo === item.id && (
+                    <div className="flex gap-2 my-2">
+                        <input
+                            value={replyInput}
+                            onChange={e => setReplyInput(e.target.value)}
+                            placeholder="Write a reply…"
+                            className="flex-1 h-9 border rounded px-2"
+                        />
+                        <button
+                            className="bg-gray-900 text-white px-3 rounded"
+                            type="button"
+                            onClick={() => {
+                                if (replyInput.trim()) {
+                                    onSendReply(item.id, replyInput.trim());
+                                    setReplyInput('');
+                                    setReplyTo(null);
+                                }
+                            }}
+                        >
+                            <span className="ml-1">Reply</span>
+                        </button>
+                    </div>
+                )}
 
             {/* Render nested replies recursively or show limit message */}
             {item.replies && item.replies.length > 0 && (
-                <div className="mt-2 border-l pl-3 border-gray-300">
-                    {level + 1 < MAX_NEST_LEVEL
-                        ? renderReplies(item.replies, level + 1)
-                        : <div className="text-xs text-gray-500 py-2">Maximum reply depth reached.</div>
-                    }
+                <div className="mt-2 pl-3 border-gray-300">
+                    {/* {level + 1 < MAX_NEST_LEVEL */}
+                    {/* // ? */}
+                    {renderReplies(item.replies, level + 1)}
+                    {/* : <div className="text-xs text-gray-500 py-2">Maximum reply depth reached.</div> */}
+                    {/* } */}
                 </div>
             )}
         </div>
@@ -112,49 +114,50 @@ const CommentModal: React.FC<CommentModalProps> = ({
 
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} className="max-w-2xl">
-            <div className="px-6 py-4 border-b flex items-center justify-between">
-                <h3 className="text-lg font-semibold">{title}</h3>
-                <button onClick={onClose} className="p-2 rounded-md hover:bg-gray-100">
-                    <FiX />
-                </button>
-            </div>
-            <div className="px-6 py-4">
-                {/* New comment input */}
-                <div className="flex gap-2 mb-4">
-                    <input
-                        className="flex-1 h-11 border rounded px-3"
-                        value={text}
-                        onChange={e => setText(e.target.value)}
-                        placeholder="Write a comment…"
-                    />
-                    <button
-                        className="bg-gray-900 text-white px-4 rounded"
-                        onClick={() => {
-                            if (text.trim()) {
-                                onSendComment(text.trim());
-                                setText('');
-                            }
-                        }}
-                    >
-                        {/* <FiSend /> */}
-                        <span className="ml-1">Send</span>
-                    </button>
+        <Modal isOpen={isOpen} onClose={onClose} className="max-w-[700px] m-4">
+            <div className="relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+                <div className="px-2 pr-14">
+                    <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
+                        {title}
+                    </h4>
                 </div>
-                {/* Comments + nested replies */}
-                <div
-                    style={{
-                        maxHeight: "60vh",
-                        overflowY: "auto",
-                        padding: "6px",
-                    }}
-                    className="custom-scrollbar"
-                >
-                    {commentLists.length === 0 ? (
-                        <p className="text-sm text-gray-500">No comments!!!</p>
-                    ) : (
-                        renderReplies(commentLists, 0)
-                    )}
+                <div className="px-2 py-4">
+                    {/* New comment input */}
+                    <div className="flex gap-2 mb-4">
+                        <input
+                            className="flex-1 h-11 border rounded px-3"
+                            value={text}
+                            onChange={e => setText(e.target.value)}
+                            placeholder="Write a comment…"
+                        />
+                        <button
+                            className="bg-gray-900 text-white px-4 rounded"
+                            onClick={() => {
+                                if (text.trim()) {
+                                    onSendComment(text.trim());
+                                    setText('');
+                                }
+                            }}
+                        >
+                            {/* <FiSend /> */}
+                            <span className="ml-1">Send</span>
+                        </button>
+                    </div>
+                    {/* Comments + nested replies */}
+                    <div
+                        style={{
+                            maxHeight: "60vh",
+                            overflowY: "auto",
+                            padding: "6px",
+                        }}
+                        className="custom-scrollbar"
+                    >
+                        {commentLists.length === 0 ? (
+                            <p className="text-sm text-gray-500">No comments!!!</p>
+                        ) : (
+                            renderReplies(commentLists, 0)
+                        )}
+                    </div>
                 </div>
             </div>
         </Modal>

@@ -49,7 +49,7 @@ const navItems: NavItem[] = [
     subItems: [
       { name: "Student registration", path: "/registration-form", pro: false },
       { name: "College registration", path: "/college-form", pro: false },
-      { name: "Company registration Elements", path: "/company-form", pro: false },
+      { name: "Company registration", path: "/company-form", pro: false },
     ]
 
   },

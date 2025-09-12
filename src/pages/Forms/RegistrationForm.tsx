@@ -5,6 +5,8 @@ import { FaPlus, FaMinus } from "react-icons/fa";
 import CreatableSelect from 'react-select/creatable';
 import DatePicker from "react-datepicker";
 
+
+
 type EduDetail = {
   id: string;
   qualification: string;
@@ -159,13 +161,13 @@ const RegistrationForm: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#f9fafb] px-5 py-1">
+    <div className="min-h-screen bg-[#f9fafb] px-5 py-5">
       {/* Card */}
       <div className="container w-full max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl bg-white rounded-2xl shadow mx-auto flex flex-col h-[98vh]">
 
         {/* Header (fixed) */}
         <div className="border-b border-gray-200 px-6 py-4 shrink-0">
-          <h1 className="text-xl font-bold">Registration Form</h1>
+          <h1 className="text-xl font-bold">Student Registration Form</h1>
         </div>
 
         {/* Body (scrollable only inside this div) */}
@@ -241,6 +243,10 @@ const RegistrationForm: React.FC = () => {
                 placeholderText="Select date"
                 dateFormat="dd-MM-yyyy"
                 isClearable
+                showMonthDropdown
+                showYearDropdown
+                scrollableYearDropdown
+                yearDropdownItemNumber={100} // shows 100 years in the dropdown
                 className="w-full rounded-md border border-gray-300 px-3 py-2"
               />
             </div>

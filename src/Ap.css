@@ -3,3 +3,32 @@
 .cursor-pointer * {
     cursor: pointer !important;
 }
+
+/* Apply this CSS globally or to the specific table */
+.table-auto {
+    /* background-color: red; */
+    table-layout: auto;
+    width: 100%;
+    /* To fill the available space */
+}
+
+.table-auto th,
+.table-auto td {
+    padding: 8px;
+    text-align: left;
+
+}
+
+.table-auto th {
+    font-weight: bold;
+}
+
+.table-auto .wide-column {
+    min-width: 150px;
+    /* Adjust as needed */
+}
+
+.table-auto .narrow-column {
+    min-width: 80px;
+    /* Adjust as needed */
+}
