@@ -73,9 +73,9 @@ const columnFields: ColumnField[] = [
     { value: 6, label: 'View Full Detail' },
     { value: 7, label: 'View Attachments' },
     { value: 8, label: 'Open To' },
-    { value: 9, label: 'Status' },
-    { value: 10, label: 'Action' },
-    { value: 11, label: 'Comment' },
+    { value: 9, label: 'Comment' },
+    { value: 10, label: 'Status' },
+    { value: 11, label: 'Action' },
 ]
 
 // your row type
@@ -176,8 +176,10 @@ const StudentDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
     const [isCommentModalOpen, setIsCommentModalOpen] = useState<number | null>(null);
     const [commentLists, setCommentLists] = useState<Comment[][]>([])
-    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>(columnFields.slice(0, 4));
-    const [count, setCount] = useState(0); // Dummy state to test
+    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>([
+        ...columnFields.slice(0, 4),   // first 4
+        ...columnFields.slice(-2)      // last 2
+    ]);
     console.log('type of --------------');
 
     console.log(selectedcolumnFields);
@@ -459,14 +461,14 @@ const StudentDashboard: React.FC = () => {
                                     />
                                 </div>
                                 {/* Dummy Count Increment Button */}
-                                <button onClick={() => setCount(count + 1)}>
+                                {/* <button onClick={() => setCount(count + 1)}>
                                     Increment Count (Current Count: {count})
-                                </button>
+                                </button> */}
                                 {/* TABLE — desktop only (lg ≥ 1024px) */}
                                 <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                                     <div className="max-w-full overflow-x-auto">
                                         <div
-                                            className="min-w-[1024px]"
+                                            className="min-w-[0]"
                                         >
 
                                             <Table className="table-auto">

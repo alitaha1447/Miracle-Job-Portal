@@ -38,6 +38,21 @@ const navItems: NavItem[] = [
       { name: "College Dashboard", path: "/college-dashboard", },
     ],
   },
+  // {
+  //   icon: <GridIcon />,
+  //   name: "Job Dashboard",
+  //   path: "/",
+  // },
+  // {
+  //   icon: <GridIcon />,
+  //   name: "Student Dashboard",
+  //   path: "/student-dashboard",
+  // },
+  // {
+  //   icon: <GridIcon />,
+  //   name: "College Dashboard",
+  //   path: "/college-dashboard",
+  // },
   {
     icon: <GridIcon />,
     name: "Verification Dashboard",
@@ -199,11 +214,11 @@ const AppSidebar: React.FC = () => {
 
 
   const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => {
-
+    console.log(items)
     return (
       <ul className="flex flex-col gap-4">
         {items.map((nav, index) => {
-          // console.log(nav?.subItems)
+
           const isDashboard = nav.name === "Dashboard";
 
           const subItems =
@@ -214,89 +229,206 @@ const AppSidebar: React.FC = () => {
           if (isDashboard && roleType && ALLOW[roleType] && (!subItems || subItems.length === 0)) {
             return null;
           }
-          return (
-            <li key={nav.name}>
-              {subItems ? (
-                <>
-                  <button
-                    onClick={() => handleSubmenuToggle(index, menuType)}
-                    className={`menu-item group ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                      ? "menu-item-active"
-                      : "menu-item-inactive"
-                      } cursor-pointer ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
-                  >
-                    <span
-                      className={`menu-item-icon-size ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                        ? "menu-item-icon-active"
-                        : "menu-item-icon-inactive"
-                        }`}
-                    >
-                      {nav.icon}
-                    </span>
-                    {(isExpanded || isHovered || isMobileOpen) && (
-                      <span className="menu-item-text">{nav.name}</span>
-                    )}
-                    {(isExpanded || isHovered || isMobileOpen) && (
-                      <ChevronDownIcon
-                        className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                          ? "rotate-180 text-brand-500"
-                          : ""
-                          }`}
-                      />
-                    )}
-                  </button>
-
-                  {(isExpanded || isHovered || isMobileOpen) && (
-                    <div
-                      ref={(el) => {
-                        subMenuRefs.current[`${menuType}-${index}`] = el;
-                      }}
-                      className="overflow-hidden transition-all duration-300"
-                      style={{
-                        height:
-                          openSubmenu?.type === menuType && openSubmenu?.index === index
-                            ? `${subMenuHeight[`${menuType}-${index}`]}px`
-                            : "0px",
-                      }}
-                    >
-                      <ul className="mt-2 space-y-1 ml-9">
-                        {subItems!.map((subItem) => (
-                          <li key={subItem.name}>
-                            <Link
-                              to={subItem.path}
-                              className={`menu-dropdown-item ${isActive(subItem.path)
-                                ? "menu-dropdown-item-active"
-                                : "menu-dropdown-item-inactive"
-                                }`}
-                            >
-                              {subItem.name}
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </>
-              ) : (
-                nav.path && (
-                  <Link
-                    to={nav.path}
-                    className={`menu-item group ${isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+          // ✅ For Dashboard: show subItems directly (no dropdown/toggle)
+          if (isDashboard && subItems) {
+            return (
+              <li key={nav.name}>
+                {(isExpanded || isHovered || isMobileOpen) && (
+                  <ul className="mt-2 space-y-1 ml-0">
+                    {subItems.map((subItem) => (
+                      <li key={subItem.name}>
+                        <Link
+                          to={subItem.path}
+                          className={`menu-dropdown-item ${isActive(subItem.path)
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                            }`}
+                        >
+                          <span className={`menu-item-icon-size ${isActive(subItem.path)
+                            ? "menu-item-icon-active"
+                            : "menu-item-icon-inactive"
+                            }`}>
+                            {nav.icon /* ✅ show icon here */}
+                          </span>
+                          {/* {(isExpanded || isHovered || isMobileOpen) && ( */}
+                          <span className="menu-item-text">{subItem.name}</span>
+                          {/* )} */}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            )
+          }
+          // 🔽 Default behavior for items that DO have subItems (keep your dropdown)
+          if (subItems) {
+            return (
+              <li key={nav.name}>
+                <button
+                  onClick={() => handleSubmenuToggle(index, menuType)}
+                  className={`menu-item group ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                    ? "menu-item-active"
+                    : "menu-item-inactive"
+                    } cursor-pointer ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+                >
+                  <span
+                    className={`menu-item-icon-size ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                      ? "menu-item-icon-active"
+                      : "menu-item-icon-inactive"
                       }`}
                   >
-                    <span
-                      className={`menu-item-icon-size ${isActive(nav.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                    {nav.icon}
+                  </span>
+                  {(isExpanded || isHovered || isMobileOpen) && (
+                    <span className="menu-item-text">{nav.name}</span>
+                  )}
+                  {(isExpanded || isHovered || isMobileOpen) && (
+                    <ChevronDownIcon
+                      className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                        ? "rotate-180 text-brand-500"
+                        : ""
                         }`}
-                    >
-                      {nav.icon}
-                    </span>
-                    {(isExpanded || isHovered || isMobileOpen) && (
-                      <span className="menu-item-text">{nav.name}</span>
-                    )}
-                  </Link>
-                )
-              )}
-            </li>
+                    />
+                  )}
+                </button>
+
+                {(isExpanded || isHovered || isMobileOpen) && (
+                  <div
+                    ref={(el) => {
+                      subMenuRefs.current[`${menuType}-${index}`] = el;
+                    }}
+                    className="overflow-hidden transition-all duration-300"
+                    style={{
+                      height:
+                        openSubmenu?.type === menuType && openSubmenu?.index === index
+                          ? `${subMenuHeight[`${menuType}-${index}`]}px`
+                          : "0px",
+                    }}
+                  >
+                    <ul className="mt-2 space-y-1 ml-9">
+                      {subItems.map((subItem) => (
+                        <li key={subItem.name}>
+                          <Link
+                            to={subItem.path}
+                            className={`menu-dropdown-item ${isActive(subItem.path)
+                              ? "menu-dropdown-item-active"
+                              : "menu-dropdown-item-inactive"
+                              }`}
+                          >
+                            {subItem.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </li>
+            )
+          }
+          // 🔗 Items without subItems (simple link)
+          return (
+            nav.path && (
+              <li key={nav.name}>
+                <Link
+                  to={nav.path}
+                  className={`menu-item group ${isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+                    }`}
+                >
+                  <span
+                    className={`menu-item-icon-size ${isActive(nav.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                      }`}
+                  >
+                    {nav.icon}
+                  </span>
+                  {(isExpanded || isHovered || isMobileOpen) && (
+                    <span className="menu-item-text">{nav.name}</span>
+                  )}
+                </Link>
+              </li>
+            )
+            // <li key={nav.name}>
+            //   {subItems ? (
+            //     <>
+            //       <button
+            //         onClick={() => handleSubmenuToggle(index, menuType)}
+            //         className={`menu-item group ${openSubmenu?.type === menuType && openSubmenu?.index === index
+            //           ? "menu-item-active"
+            //           : "menu-item-inactive"
+            //           } cursor-pointer ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+            //       >
+            //         <span
+            //           className={`menu-item-icon-size ${openSubmenu?.type === menuType && openSubmenu?.index === index
+            //             ? "menu-item-icon-active"
+            //             : "menu-item-icon-inactive"
+            //             }`}
+            //         >
+            //           {nav.icon}
+            //         </span>
+            //         {(isExpanded || isHovered || isMobileOpen) && (
+            //           <span className="menu-item-text">{nav.name}</span>
+            //         )}
+            //         {(isExpanded || isHovered || isMobileOpen) && (
+            //           <ChevronDownIcon
+            //             className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType && openSubmenu?.index === index
+            //               ? "rotate-180 text-brand-500"
+            //               : ""
+            //               }`}
+            //           />
+            //         )}
+            //       </button>
+
+            //       {(isExpanded || isHovered || isMobileOpen) && (
+            //         <div
+            //           ref={(el) => {
+            //             subMenuRefs.current[`${menuType}-${index}`] = el;
+            //           }}
+            //           className="overflow-hidden transition-all duration-300"
+            //           style={{
+            //             height:
+            //               openSubmenu?.type === menuType && openSubmenu?.index === index
+            //                 ? `${subMenuHeight[`${menuType}-${index}`]}px`
+            //                 : "0px",
+            //           }}
+            //         >
+            //           <ul className="mt-2 space-y-1 ml-9">
+            //             {subItems!.map((subItem) => (
+            //               <li key={subItem.name}>
+            //                 <Link
+            //                   to={subItem.path}
+            //                   className={`menu-dropdown-item ${isActive(subItem.path)
+            //                     ? "menu-dropdown-item-active"
+            //                     : "menu-dropdown-item-inactive"
+            //                     }`}
+            //                 >
+            //                   {subItem.name}
+            //                 </Link>
+            //               </li>
+            //             ))}
+            //           </ul>
+            //         </div>
+            //       )}
+            //     </>
+            //   ) : (
+            //     nav.path && (
+            //       <Link
+            //         to={nav.path}
+            //         className={`menu-item group ${isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
+            //           }`}
+            //       >
+            //         <span
+            //           className={`menu-item-icon-size ${isActive(nav.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+            //             }`}
+            //         >
+            //           {nav.icon}
+            //         </span>
+            //         {(isExpanded || isHovered || isMobileOpen) && (
+            //           <span className="menu-item-text">{nav.name}</span>
+            //         )}
+            //       </Link>
+            //     )
+            //   )}
+            // </li>
           )
         })}
       </ul>

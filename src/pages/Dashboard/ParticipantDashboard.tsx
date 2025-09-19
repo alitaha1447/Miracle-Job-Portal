@@ -51,18 +51,19 @@ type ColumnField = {
 }
 
 const columnFields: ColumnField[] = [
-    { value: 0, label: 'S.No.' },
-    { value: 1, label: 'Name' },
-    { value: 2, label: 'Email' },
-    { value: 3, label: 'Mobile No.' },
-    { value: 4, label: 'Apply Date' },
-    { value: 5, label: 'Remark' },
-    { value: 6, label: 'View Resume' },
-    { value: 7, label: 'Add Certificate	' },
-    { value: 8, label: 'View Qualification' },
-    { value: 9, label: 'View Experience' },
-    { value: 10, label: 'Status' },
-    { value: 11, label: 'Action' },
+    { value: 0, label: 'Checkbox' },
+    { value: 1, label: 'S.No.' },
+    { value: 2, label: 'Name' },
+    { value: 3, label: 'Email' },
+    { value: 4, label: 'Mobile No.' },
+    { value: 5, label: 'Apply Date' },
+    { value: 6, label: 'Remark' },
+    { value: 7, label: 'View Resume' },
+    { value: 8, label: 'Add Certificate	' },
+    { value: 9, label: 'View Qualification' },
+    { value: 10, label: 'View Experience' },
+    { value: 11, label: 'Status' },
+    { value: 12, label: 'Action' },
 ]
 
 const ParticipantDashboard: React.FC = () => {
@@ -82,22 +83,31 @@ const ParticipantDashboard: React.FC = () => {
     const [rows, setRows] = useState(tableData);
 
     const [observation, setObservation] = useState<string>('')
-    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>(columnFields.slice(0, 4));
-
+    const [selectedcolumnFields, setSelectedcolumnFields] = useState<MultiValue<ColumnField>>([
+        ...columnFields.slice(0, 4),   // first 4
+        ...columnFields.slice(-2)      // last 2
+    ]);
     const selectedValues = useMemo(
         () => selectedcolumnFields.map(s => s.value),
         [selectedcolumnFields]
     );
 
-    const columnMap = useMemo(() => ({
-        0: { header: "S.No.", render: (_r: any, idx: number) => idx + 1 },
-        1: { header: "Name", render: (r: any) => r.name },
-        2: { header: "Email", render: (r: any) => r.email },
-        3: { header: "Mobile No.", render: (r: any) => r.mobile },
-        4: { header: "Apply Date", render: (r: any) => r.applyDate },
-        5: { header: "Remark", render: (r: any) => r.remark },
-        6: { header: "View Resume", render: (r: any) => (r.jobType) },
-        7: {
+    const columnMap =
+
+    {
+        0: {
+            header: "", render: (_r: any, idx: number) => (
+                <Checkbox id={idx.toString()} />
+            )
+        },
+        1: { header: "S.No.", render: (_r: any, idx: number) => idx + 1 },
+        2: { header: "Name", render: (r: any) => r.name },
+        3: { header: "Email", render: (r: any) => r.email },
+        4: { header: "Mobile No.", render: (r: any) => r.mobile },
+        5: { header: "Apply Date", render: (r: any) => r.applyDate },
+        6: { header: "Remark", render: (r: any) => r.remark },
+        7: { header: "View Resume", render: (r: any) => (r.jobType) },
+        8: {
             header: "Add Certificate	", render: (_r: any) => (
                 <button
                     type="button"
@@ -108,44 +118,7 @@ const ParticipantDashboard: React.FC = () => {
                 </button>
             )
         },
-        8: {
-            header: "View Qualification	", render: (_r: any, idx: number) => (
-                <div className="relative inline-flex">
-                    <select
-                        value={rows[idx].status}
-                        onChange={(e) => handleStatusChange(idx, e.target.value)}
-                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
-                                                   bg-white text-gray-700 hover:opacity-90 transition
-                                                   focus:outline-none focus:ring focus:ring-brand-500/10
-                                                   dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
-                    >
-                        {STATUS_OPTIONS.map((opt) => (
-                            <option
-                                key={opt}
-                                value={opt}
-                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                            >
-                                {opt}
-                            </option>
-                        ))}
-                    </select>
 
-                    {/* Chevron */}
-                    <svg
-                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                </div>
-            )
-        },
 
         9: { header: "View Experience", render: (r: any) => r.date },
         10: {
@@ -187,22 +160,56 @@ const ParticipantDashboard: React.FC = () => {
             )
         },
         11: {
+            header: "Status	", render: (_r: any, idx: number) => (
+                <div className="relative inline-flex">
+                    <select
+                        value={rows[idx].status}
+                        onChange={(e) => handleStatusChange(idx, e.target.value)}
+                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                                                   bg-white text-gray-700 hover:opacity-90 transition
+                                                   focus:outline-none focus:ring focus:ring-brand-500/10
+                                                   dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
+                    >
+                        {STATUS_OPTIONS.map((opt) => (
+                            <option
+                                key={opt}
+                                value={opt}
+                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                            >
+                                {opt}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Chevron */}
+                    <svg
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                            clipRule="evenodd"
+                        />
+                    </svg>
+                </div>
+            )
+        },
+        12: {
             header: "Action", render: (_r: any, idx: number) => (
                 <div className="relative inline-flex">
                     <button
                         onClick={() => toggleDesktopStatusMenu(idx)}
                         className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                        aria-haspopup="menu"
                         style={{ lineHeight: 0 }}
                     >
                         <BsThreeDotsVertical size={20} />
                     </button>
                     {/* Status dropdown */}
                     {desktopOpenStatusIdx === idx && (
-
-                        <div
-                            className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                        >
+                        <div className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
                             <button
                                 onClick={() => toggleStartInterview()}
                                 type="button"
@@ -222,7 +229,6 @@ const ParticipantDashboard: React.FC = () => {
                                 Schedule Interview
                             </button>
                             <button
-                                // onClick={toggleScheduleInterview}
                                 type="button"
                                 className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
                                 Send Intimation
@@ -233,18 +239,18 @@ const ParticipantDashboard: React.FC = () => {
             )
         },
 
-    } as const), [rows]);
+    }
+
 
     // const visibleCols = columnFields.filter(cf => selectedValues.includes(cf.value))
-
     const visibleCols = useMemo(() => {
         return columnFields.filter((cf) => selectedValues.includes(cf.value))
             .map((cf) => ({
                 key: cf.value,
                 ...columnMap[cf.value as keyof typeof columnMap],
             }))
-    }, [selectedValues])
-    console.log(visibleCols)
+    }, [rows, selectedValues, desktopOpenStatusIdx])
+
     // Update a specific row's status
     const handleStatusChange = (rowIndex: number, newStatus: string) => {
         setRows(prev => prev.map((r, i) => (i === rowIndex ? { ...r, status: newStatus } : r)));
@@ -255,7 +261,6 @@ const ParticipantDashboard: React.FC = () => {
     // With useCallback - same function unless dependencies change
     const toggleStartInterview = useCallback(() => {
         // setSelectedInterviwer?.(id)
-
         setstartInterview(prev => !prev);
     }, []);
 
@@ -272,6 +277,7 @@ const ParticipantDashboard: React.FC = () => {
 
     // Desktop status menu
     const toggleDesktopStatusMenu = (idx: number) => {
+        console.log(idx)
         setDesktopOpenStatusIdx(prev => (prev === idx ? null : idx));
         // Close mobile menu when opening desktop menu
         setMobileOpenStatusIdx(null);
@@ -297,9 +303,7 @@ const ParticipantDashboard: React.FC = () => {
 
     return (
         <>
-
             <div className="space-y-6">
-
                 <div
                     className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]`}
                 >
@@ -317,114 +321,116 @@ const ParticipantDashboard: React.FC = () => {
                     </div>
 
                     {/* Desktop Table View */}
-                    <div className='hidden lg:block'>
-                        <Select
-                            isMulti
-                            options={columnFields}
-                            value={selectedcolumnFields}
-                            onChange={(selected: MultiValue<ColumnField>) => {
-                                setSelectedcolumnFields(selected);
-                            }}
-                            placeholder="Select fields"
-                            defaultValue={columnFields.slice(0, 4)} // 👈 first 4 selected by default
 
-                        />
-                    </div>
                     <div className=" p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-                        <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                            <div className="max-w-full overflow-x-auto">
-                                <div className="min-w-[1102px]">
-                                    <Table>
-                                        {/* Table Header */}
-                                        <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-                                            <TableRow>
-                                                {visibleCols.map(col => (
-                                                    <TableCell key={col.key} className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                                                        {col.header}
-                                                    </TableCell>
-                                                ))}
+                        <div className='space-y-6'>
+                            <div className='hidden lg:block'>
+                                <Select
+                                    isMulti
+                                    options={columnFields}
+                                    value={selectedcolumnFields}
+                                    onChange={(selected: MultiValue<ColumnField>) => {
+                                        setSelectedcolumnFields(selected);
+                                    }}
+                                    placeholder="Select fields"
+                                    defaultValue={columnFields.slice(0, 4)} // 👈 first 4 selected by default
 
-                                            </TableRow>
-                                        </TableHeader>
-
-                                        {/* Table Body */}
-                                        <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                            {tableData.map((row, idx) => (
-                                                <TableRow key={idx}>
+                                />
+                            </div>
+                            <div className="hidden lg:block overflow-visible rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                                <div className="max-w-full overflow-x-auto">
+                                    <div className="min-w-[0]">
+                                        <Table className="table-auto ">
+                                            {/* Table Header */}
+                                            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                                                <TableRow>
                                                     {visibleCols.map(col => (
-                                                        <TableCell key={col.key} className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                            {col.render(row, idx)}
+                                                        <TableCell key={col.key} className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                            {col.header}
                                                         </TableCell>
                                                     ))}
+
                                                 </TableRow>
-                                            ))}
-                                        </TableBody>
-                                    </Table>
+                                            </TableHeader>
+
+                                            {/* Table Body */}
+                                            <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                                {tableData.map((row, idx) => (
+                                                    <TableRow key={idx}>
+                                                        {visibleCols.map(col => (
+                                                            <TableCell key={col.key} className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                                {col.render(row, idx)}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {/* Mobile Card View */}
-                        <div className="lg:hidden overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
-                            {tableData.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] flex flex-col gap-3"
-                                >
-                                    <div className="flex items-start justify-between gap-3">
-                                        <div className="flex items-center gap-3">
-                                            <Checkbox />
-                                            <div>
-                                                <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
-                                                    {index + 1}. {item.name}
-                                                </h4>
-                                                <div className="relative inline-flex">
-                                                    <select
-                                                        value={rows[index].status}
-                                                        onChange={(e) => handleStatusChange(index, e.target.value)}
-                                                        className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
+                            {/* Mobile Card View */}
+                            <div className="lg:hidden overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+                                {tableData.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03] flex flex-col gap-3"
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <Checkbox />
+                                                <div>
+                                                    <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
+                                                        {index + 1}. {item.name}
+                                                    </h4>
+                                                    <div className="relative inline-flex">
+                                                        <select
+                                                            value={rows[index].status}
+                                                            onChange={(e) => handleStatusChange(index, e.target.value)}
+                                                            className="appearance-none px-3 py-1 pr-8 rounded-full border text-xs font-medium
                                                bg-white text-gray-700 hover:opacity-90 transition
                                                focus:outline-none focus:ring focus:ring-brand-500/10
                                                dark:bg-gray-dark dark:text-gray-300 dark:border-gray-800"
-                                                    >
-                                                        {STATUS_OPTIONS.map((opt) => (
-                                                            <option
-                                                                key={opt}
-                                                                value={opt}
-                                                                className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                                            >
-                                                                {opt}
-                                                            </option>
-                                                        ))}
-                                                    </select>
+                                                        >
+                                                            {STATUS_OPTIONS.map((opt) => (
+                                                                <option
+                                                                    key={opt}
+                                                                    value={opt}
+                                                                    className="text-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                                                                >
+                                                                    {opt}
+                                                                </option>
+                                                            ))}
+                                                        </select>
 
-                                                    {/* Chevron */}
-                                                    <svg
-                                                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                        aria-hidden="true"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
+                                                        {/* Chevron */}
+                                                        <svg
+                                                            className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                            aria-hidden="true"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.185l3.71-2.955a.75.75 0 1 1 .94 1.17l-4.24 3.38a.75.75 0 0 1-.94 0l-4.24-3.38a.75.75 0 0 1 .02-1.06z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <div className="relative">
-                                            <button
-                                                onClick={() => toggleMobileStatusMenu(index)}
-                                                className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
-                                                aria-haspopup="menu"
-                                                style={{ lineHeight: 0 }}
-                                            >
-                                                <BsThreeDotsVertical size={18} />
-                                            </button>
+                                            <div className="relative">
+                                                <button
+                                                    onClick={() => toggleMobileStatusMenu(index)}
+                                                    className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-neutral-800 text-gray-600 dark:text-gray-300"
+                                                    aria-haspopup="menu"
+                                                    style={{ lineHeight: 0 }}
+                                                >
+                                                    <BsThreeDotsVertical size={18} />
+                                                </button>
 
-                                            {/* <Dropdown
+                                                {/* <Dropdown
                                                 isOpen={mobileOpenStatusIdx === index}
                                                 onClose={closeMobileStatusMenu}
                                                 className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
@@ -449,86 +455,87 @@ const ParticipantDashboard: React.FC = () => {
                                                     Schedule Interview
                                                 </button>
                                             </Dropdown> */}
-                                            {mobileOpenStatusIdx === index && (
-                                                <div
-                                                    className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
-                                                >
-                                                    <button
-                                                        onClick={() => toggleStartInterview()}
-                                                        type="button"
-                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                        Start Interview
-                                                    </button>
-                                                    <button
-                                                        onClick={toggleUploadLetter}
-                                                        type="button"
-                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                        Upload Appointment letter
-                                                    </button>
-                                                    <button
-                                                        onClick={toggleScheduleInterview}
-                                                        type="button"
-                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                        Schedule Interview
-                                                    </button>
-                                                    <button
-                                                        // onClick={toggleScheduleInterview}
-                                                        type="button"
-                                                        className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
-                                                        Send Intimation
-                                                    </button>
-                                                </div>
-                                            )}
+                                                {mobileOpenStatusIdx === index && (
+                                                    <div
+                                                        className="absolute right-0 top-full z-50 mt-2 flex w-48 flex-col rounded-2xl border border-gray-200 bg-white p-2 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
+                                                    >
+                                                        <button
+                                                            onClick={() => toggleStartInterview()}
+                                                            type="button"
+                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                            Start Interview
+                                                        </button>
+                                                        <button
+                                                            onClick={toggleUploadLetter}
+                                                            type="button"
+                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                            Upload Appointment letter
+                                                        </button>
+                                                        <button
+                                                            onClick={toggleScheduleInterview}
+                                                            type="button"
+                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                            Schedule Interview
+                                                        </button>
+                                                        <button
+                                                            // onClick={toggleScheduleInterview}
+                                                            type="button"
+                                                            className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 dark:hover:bg-neutral-800">
+                                                            Send Intimation
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="grid grid-cols-1 gap-2 text-sm">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Email</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.email}</span>
+                                        <div className="grid grid-cols-1 gap-2 text-sm">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-500">Email</span>
+                                                <span className="font-medium text-gray-800 dark:text-white/90">{item.email}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-500">Mobile</span>
+                                                <span className="font-medium text-gray-800 dark:text-white/90">{item.mobile}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-500">Apply Date</span>
+                                                <span className="font-medium text-gray-800 dark:text-white/90">{item.applyDate}</span>
+                                            </div>
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-500">Remark</span>
+                                                <span className="font-medium text-gray-800 dark:text-white/90">{item.remark}</span>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Mobile</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.mobile}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Apply Date</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.applyDate}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Remark</span>
-                                            <span className="font-medium text-gray-800 dark:text-white/90">{item.remark}</span>
-                                        </div>
-                                    </div>
 
-                                    <div className="pt-2 grid grid-cols-2 gap-2">
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
-                                        >
-                                            <FiEye className="text-sm" /> View Resume
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
-                                        >
-                                            <FiEye className="text-sm" /> Add Certificate
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 col-span-2"
-                                        >
-                                            <FiEye className="text-sm" /> View Qualification
-                                        </button>
-                                        <button
-                                            type="button"
-                                            className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 col-span-2"
-                                        >
-                                            <FiEye className="text-sm" /> View Experience
-                                        </button>
+                                        <div className="pt-2 grid grid-cols-2 gap-2">
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
+                                            >
+                                                <FiEye className="text-sm" /> View Resume
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700"
+                                            >
+                                                <FiEye className="text-sm" /> Add Certificate
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 col-span-2"
+                                            >
+                                                <FiEye className="text-sm" /> View Qualification
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium text-gray-700 col-span-2"
+                                            >
+                                                <FiEye className="text-sm" /> View Experience
+                                            </button>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
