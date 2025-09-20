@@ -1,67 +1,89 @@
-import React, { useState, lazy, Suspense } from 'react'
+import React, { useState, lazy, Suspense, useEffect } from 'react'
 
-import { SingleValue } from "react-select";
+// import { SingleValue } from "react-select";
 import { FaUsers } from "react-icons/fa";
 
 import { GoXCircle } from "react-icons/go";
 import { FaBriefcase } from "react-icons/fa";
 import { PiStudentBold } from "react-icons/pi";
 import { FaUniversity } from "react-icons/fa";
+import axios from 'axios';
+
+
+const API_PATH = import.meta.env.VITE_APP_API_PATH;
+const API_KEY = import.meta.env.VITE_APP_API_KEY;
+
+type UserType = "Student" | "Company" | "College";
+
+const ENDPOINTS: Record<UserType, string> = {
+    Student: "/api/student",
+    Company: "/api/Company",
+    College: "/api/college",
+};
 
 // Lazy-loaded
 const Student = lazy(() => import("../../components/verificationTable/Student"));
 const Company = lazy(() => import("../../components/verificationTable/Company"));
-const College = lazy(() => import("../../components/verificationTable/College"));
+// const College = lazy(() => import("../../components/verificationTable/College"));
 
-type UserType = "Student" | "Company" | "College";
+// type Row = {
+//     id: number;
+//     name: string;
+//     mobile: string;
+//     email: string;
+//     status: string; // stores the LABEL text
+// };
 
-type Row = {
-    id: number;
-    name: string;
-    mobile: string;
-    email: string;
-    status: string; // stores the LABEL text
-};
+// type StatusOption = { value: string; label: string };
 
-type StatusOption = { value: string; label: string };
 
-// initial data per type
-const initialData: Record<UserType, Row[]> = {
-    Student: [
-        { id: 0, name: "Prince Jain", mobile: "9981341559", email: "p@gmail.com", status: "Pending for verification" },
-        { id: 1, name: "Kuldeep Mishra", mobile: "9981341559", email: "p@gmail.com", status: "Verified" },
-        { id: 2, name: "Joney", mobile: "9981341559", email: "p@gmail.com", status: "Verification failed" },
-        { id: 3, name: "Jatin", mobile: "9981341559", email: "p@gmail.com", status: "Verification in Progress" },
-    ],
-    Company: [
-        { id: 100, name: "Acme Pvt Ltd", mobile: "022-555000", email: "hr@acme.com", status: "Pending for verification" },
-    ],
-    College: [
-        { id: 200, name: "BNIT", mobile: "0755-220011", email: "admin@bnit.edu", status: "Verified" },
-    ],
-};
 
 
 const VerificationDashboard: React.FC = () => {
 
     const [userType, setUserType] = useState<UserType>("Student");
-    const [data, setData] = useState<Record<UserType, Row[]>>(initialData);
-    const [selectedStatus, setSelectedStatus] = useState<Row | null>(null);
+    const [rows, setRows] = useState<any[]>([]);
+    // const [loading, setLoading] = useState(false);
+    // const [data, setData] = useState<Record<UserType, Row[]>>(initialData);
+    // const [selectedStatus, setSelectedStatus] = useState<Row | null>(null);
 
-    const rows = data[userType];
+    // const rows = data[userType];
 
-    const handleStatusChange = (index: number, selected: SingleValue<StatusOption>) => {
-        if (!selected) return;
+    // const handleStatusChange = (index: number, selected: SingleValue<StatusOption>) => {
+    //     if (!selected) return;
 
-        setData(prev => {
-            const list = prev[userType];
-            const updatedList = list.map((r, i) => (i === index ? { ...r, status: selected.label } : r));
-            // store only the changed row
-            setSelectedStatus(updatedList[index]);
-            return { ...prev, [userType]: updatedList };
-        });
-    };
-    console.log(selectedStatus)
+    //     setData(prev => {
+    //         const list = prev[userType];
+    //         const updatedList = list.map((r, i) => (i === index ? { ...r, status: selected.label } : r));
+    //         // store only the changed row
+    //         setSelectedStatus(updatedList[index]);
+    //         return { ...prev, [userType]: updatedList };
+    //     });
+    // };
+    // console.log(selectedStatus)
+    console.log(ENDPOINTS[userType])
+    useEffect(() => {
+        if (!userType) return
+        const fetchData = async () => {
+            try {
+                // setLoading(true);
+                const res = await axios.get(`${API_PATH}${ENDPOINTS[userType]}`, {
+                    params: {
+                        APIKEY: API_KEY
+                    }
+                });
+                console.log(res)
+                setRows(res?.data ?? []);
+            } catch (err) {
+                console.error(`Failed to fetch ${userType}`, err);
+                setRows([]);
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [userType]); // 👈 API runs whenever userType changes
 
 
     return (
@@ -168,21 +190,15 @@ const VerificationDashboard: React.FC = () => {
                                 </label>
                             ))}
                         </div>
-
                     </div>
 
                     {/* Table Body */}
                     <Suspense fallback={<div className="p-6 text-sm text-gray-500">Loading {userType} table…</div>}>
-                        {userType === "Student" && <Student rows={rows} onStatusChange={handleStatusChange} />}
-                        {userType === "Company" && <Company rows={rows} onStatusChange={handleStatusChange} />}
-                        {userType === "College" && <College rows={rows} onStatusChange={handleStatusChange} />}
+                        {userType === "Student" && <Student stuData={rows} />}
+                        {userType === "Company" && <Company compData={rows} />}
+                        {/* {userType === "College" && <College rows={rows} />} */}
                     </Suspense>
-
-
-
                 </div>
-
-
             </div>
         </div>
     )

@@ -5,37 +5,50 @@ import {
     TableHeader,
     TableRow,
 } from '../ui/table'
-import Select, { SingleValue } from "react-select";
+// import Select, { SingleValue } from "react-select";
+// import axios from 'axios';
 
-type Row = { id: number; name: string; mobile: string; email: string; status: string; };
-type StatusOption = { value: string; label: string };
+// type StudentRow = {
+//     id: number | string;
+//     name: string;
+//     mobileno: string; // keep exact key if your API returns "mobileno"
+//     email: string;
+//     status: number;       // backend code
+//     status_txt: string;   // backend label
+// };
 
 
-const STATUS_OPTIONS = [
-    { value: "0", label: "Pending for verification" },
-    { value: "1", label: "Verified" },
-    { value: "2", label: "Verification failed" }, // fixed typo
-    { value: "3", label: "Verification in Progress" },
-];
+// const API_PATH = import.meta.env.VITE_APP_API_PATH;
+// const API_KEY = import.meta.env.VITE_APP_API_KEY;
+
+type Row = { id: number; name: string; mobileno: string; email: string; status_txt: string; };
+// type StatusOption = { value: string; label: string };
+
+
+// const STATUS_OPTIONS = [
+//     { value: "0", label: "Pending for verification" },
+//     { value: "1", label: "Verified" },
+//     { value: "2", label: "Verification failed" }, // fixed typo
+//     { value: "3", label: "Verification in Progress" },
+// ];
 
 type Props = {
-    rows: Row[];
-    onStatusChange: (index: number, selected: SingleValue<StatusOption>) => void;
+    stuData: Row[];
+    // onStatusChange: (index: number, selected: SingleValue<StatusOption>) => void;
 };
 
-const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
+const Student: React.FC<Props> = ({ stuData }) => {
+    // const [studentData, setStudentData] = useState([]);
+    // console.log(rows)
+
 
 
     return (
         <>
             <div className="hidden lg:block p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
                 <div className="space-y-6">
-
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-
                         <div className="max-w-full overflow-x-auto">
-
-
                             <div className="min-w-[1102px]">
                                 <Table className='hidden lg:block'>
                                     {/* Table Header */}
@@ -95,20 +108,20 @@ const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
 
                                     {/* Table Body */}
                                     <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                        {rows.map((row, idx) => (
+                                        {stuData.map((stu, idx) => (
                                             <TableRow key={idx}>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.id}
+                                                    {stu.id}
 
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.name}
+                                                    {stu.name}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.mobile}
+                                                    {stu.mobileno}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.email}
+                                                    {stu.email}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     <button type="button"
@@ -131,13 +144,27 @@ const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
                                                         {'Experiences'}
                                                     </button>
                                                 </TableCell>
-                                                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+                                                {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                     <div className="relative inline-flex">
                                                         <Select
                                                             options={STATUS_OPTIONS}
-                                                            value={STATUS_OPTIONS.find(o => o.label === row.status) || null}
-                                                            onChange={(opt) => onStatusChange(idx, opt)}
-                                                            placeholder="Select status"
+                                                            value={STATUS_OPTIONS.find(o => o.label === stu.status_txt) || null}
+                                                            onChange={(opt) => {
+                                                                if (!opt) return;
+                                                                setStudentData(prev => {
+                                                                    const copy = [...prev];
+                                                                    const i = copy.findIndex(r => r.id === stu.id);
+                                                                    if (i >= 0) {
+                                                                        copy[i] = {
+                                                                            ...copy[i],
+                                                                            status: Number(opt.value),  // update code
+                                                                            status_txt: opt.label,      // update label
+                                                                        };
+                                                                    }
+                                                                    return copy;  // 🔑 this return makes React re-render with updated status
+                                                                });
+
+                                                            }} placeholder="Select status"
                                                             isSearchable={false}
                                                             menuPortalTarget={document.body}
                                                             menuPosition="fixed"
@@ -193,7 +220,7 @@ const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
                                                         />
 
                                                     </div>
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
                                         ))}
 
@@ -206,17 +233,34 @@ const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
             </div>
             {/* Mobile cards */}
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
-                {rows.map((row, idx) => (
-                    <div key={row.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
+                {stuData.map((stu, idx) => (
+                    <div key={idx} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
                         <div className="flex items-center justify-between mb-3">
                             <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
-                                #{row.id} • {row.name}
+                                #{stu.id} • {stu.name}
                             </h4>
-                            <div className="min-w-[160px]">
+                            {/* <div className="min-w-[160px]">
                                 <Select
                                     options={STATUS_OPTIONS}
-                                    value={STATUS_OPTIONS.find(o => o.label === row.status) || null}
-                                    onChange={(opt) => onStatusChange(idx, opt)}
+                                    value={STATUS_OPTIONS.find(o => o.label === stu.status_txt) || null}
+                                    onChange={(opt) => {
+                                        if (!opt) return;
+                                        setStudentData(prev => {
+                                            const copy = [...prev];
+                                            const i = copy.findIndex(r => r.id === stu.id);
+                                            if (i >= 0) {
+                                                copy[i] = {
+                                                    ...copy[i],
+                                                    status: Number(opt.value),  // update code
+                                                    status_txt: opt.label,      // update label
+                                                };
+                                            }
+                                            return copy;  // 🔑 this return makes React re-render with updated status
+                                        });
+
+                                    }}
+
+                                    // onStatusChange(idx, opt)}
                                     isSearchable={false}
                                     menuPortalTarget={document.body}
                                     menuPosition="fixed"
@@ -231,17 +275,17 @@ const Student: React.FC<Props> = ({ rows, onStatusChange }) => {
                                         clearIndicator: base => ({ ...base, padding: 2 }),
                                     }}
                                 />
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="space-y-2 text-sm">
                             <div className="flex items-center justify-between">
                                 <span className="text-gray-500">Email</span>
-                                <span className="font-medium text-gray-800 dark:text-white/90">{row.email}</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{stu.email}</span>
                             </div>
                             <div className="flex items-center justify-between">
                                 <span className="text-gray-500">Mobile</span>
-                                <span className="font-medium text-gray-800 dark:text-white/90">{row.mobile}</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{stu.mobileno}</span>
                             </div>
 
                             <div className="flex items-center justify-between pt-2">

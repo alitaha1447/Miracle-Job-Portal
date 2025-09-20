@@ -5,29 +5,35 @@ import {
     TableHeader,
     TableRow,
 } from '../ui/table'
-import Select, { SingleValue } from "react-select";
+// import Select, { SingleValue } from "react-select";
 
 
-type Row = { id: number; name: string; mobile: string; email: string; status: string; };
-type StatusOption = { value: string; label: string };
+type Row = {
+    id: number; about_company: string; address: string; contact_details: string; gst_no: string;
+    name: string;
+    no_of_employee: number;
+    registration_no: string;
+
+};
+// type StatusOption = { value: string; label: string };
 
 
 
-const STATUS_OPTIONS = [
-    { value: "0", label: "Pending for verification" },
-    { value: "1", label: "Verified" },
-    { value: "2", label: "Verification failed" }, // fixed typo
-    { value: "3", label: "Verification in Progress" },
-];
+// const STATUS_OPTIONS = [
+//     { value: "0", label: "Pending for verification" },
+//     { value: "1", label: "Verified" },
+//     { value: "2", label: "Verification failed" }, // fixed typo
+//     { value: "3", label: "Verification in Progress" },
+// ];
 
 type Props = {
-    rows: Row[];
-    onStatusChange: (index: number, selected: SingleValue<StatusOption>) => void;
+    compData: Row[];
+    // onStatusChange: (index: number, selected: SingleValue<StatusOption>) => void;
 };
 
 
-const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
-    console.log('second')
+const Company: React.FC<Props> = ({ compData }) => {
+    console.log(compData)
 
     return (
         <>
@@ -107,7 +113,7 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
 
                                     {/* Table Body */}
                                     <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                        {rows.map((row, idx) => (
+                                        {compData.map((row: any, idx: number) => (
                                             <TableRow key={idx}>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     {row.id}
@@ -117,10 +123,19 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
                                                     {row.name}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.mobile}
+                                                    {row.registration_no}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                    {row.email}
+                                                    {row.gst_no}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {row.address}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {row.contact_details}
+                                                </TableCell>
+                                                <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                    {row.no_of_employee}
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                                                     <button type="button"
@@ -130,34 +145,20 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
                                                     </button>
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    <button type="button"
-                                                        className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                    >
-                                                        {'Certifications'}
-                                                    </button>
+
+                                                    {row.about_company}
+
                                                 </TableCell>
                                                 <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                     <button type="button"
                                                         className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
                                                     >
-                                                        {'Experiences'}
+                                                        {row.status_txt}
                                                     </button>
                                                 </TableCell>
-                                                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    <button type="button"
-                                                        className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                    >
-                                                        {'View'}
-                                                    </button>
-                                                </TableCell>
-                                                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    <button type="button"
-                                                        className="px-2.5 py-1 rounded-full border text-xs font-medium hover:opacity-90 transition"
-                                                    >
-                                                        {'About Company'}
-                                                    </button>
-                                                </TableCell>
-                                                <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
+
+
+                                                {/* <TableCell className="px-4 py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                                                     <div className="relative inline-flex">
                                                         <Select
                                                             options={STATUS_OPTIONS}
@@ -219,7 +220,7 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
                                                         />
 
                                                     </div>
-                                                </TableCell>
+                                                </TableCell> */}
                                             </TableRow>
                                         ))}
                                     </TableBody>
@@ -231,13 +232,13 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
             </div>
             {/* Mobile cards */}
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
-                {rows.map((row, idx) => (
+                {compData.map((row: any, _) => (
                     <div key={row.id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-white/[0.03]">
                         <div className="flex items-center justify-between mb-3">
                             <h4 className="text-sm font-semibold text-gray-800 dark:text-white/90">
                                 #{row.id} • {row.name}
                             </h4>
-                            <div className="min-w-[160px]">
+                            {/* <div className="min-w-[160px]">
                                 <Select
                                     options={STATUS_OPTIONS}
                                     value={STATUS_OPTIONS.find(o => o.label === row.status) || null}
@@ -256,24 +257,48 @@ const Company: React.FC<Props> = ({ rows, onStatusChange }) => {
                                         clearIndicator: base => ({ ...base, padding: 2 }),
                                     }}
                                 />
-                            </div>
+                            </div> */}
                         </div>
 
                         <div className="space-y-2 text-sm">
                             <div className="flex items-center justify-between">
-                                <span className="text-gray-500">Email</span>
-                                <span className="font-medium text-gray-800 dark:text-white/90">{row.email}</span>
+                                <span className="text-gray-500">Company Name</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.name}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-gray-500">Mobile</span>
-                                <span className="font-medium text-gray-800 dark:text-white/90">{row.mobile}</span>
+                                <span className="text-gray-500">Registration No.</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.registration_no}</span>
                             </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-500">GSTIN No.</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.gst_no}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-500">Address</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.address}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-500">Contact Details	</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.contact_details}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-500">No. of Emloyees	</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.no_of_employee}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <span className="text-gray-500">About Company</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.about_company}</span>
+                            </div>
+                            {/* <div className="flex items-center justify-between">
+                                <span className="text-gray-500">Registration No.</span>
+                                <span className="font-medium text-gray-800 dark:text-white/90">{row.registration_no}</span>
+                            </div> */}
 
-                            <div className="flex items-center justify-between pt-2">
+                            {/* <div className="flex items-center justify-between pt-2">
                                 <button className="px-2.5 py-1 rounded-full border text-xs font-medium">Educational Details</button>
                                 <button className="px-2.5 py-1 rounded-full border text-xs font-medium">Certifications</button>
                                 <button className="px-2.5 py-1 rounded-full border text-xs font-medium">Experience</button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 ))}
